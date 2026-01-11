@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="admin.js" defer></script>
+  <link rel="stylesheet" href="admin.css" />
+  <title>Fit and Lift — Admin</title>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo-dot"></div>
+        <div>
+          <h3>Fit and Lift</h3>
+          <small class="small">Admin Panel</small>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#" class="active" data-section="dashboard">
+          <span class="icon">🏠</span><span class="label">Dashboard</span>
+        </a>
+        <a href="#" data-section="members">
+          <span class="icon">👥</span><span class="label">Members</span>
+        </a>
+        <a href="#" data-section="pricing">
+          <span class="icon">💳</span><span class="label">Pricing</span>
+        </a>
+        <a href="#" data-section="contact">
+          <span class="icon">📞</span><span class="label">Contact</span>
+        </a>
+        <a href="#" data-section="settings">
+          <span class="icon"></span><span class="label"></span>
+        </a>
+        <button class="btn" onclick="window.location.href='login.html'">Logout</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="toggle-btn" id="collapseBtn">Toggle</button>
+        <div style="flex:1"></div>
+        <div class="small">v1.0</div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="row">
+          <button class="toggle-btn" id="mobileToggle" title="Open menu">☰</button>
+          <div class="search" role="search" aria-label="Search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="opacity:.8">
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6"></circle>
+            </svg>
+            <input id="globalSearch" placeholder="Search members, trainers, programs..." />
+          </div>
+        </div>
+
+        <div class="user" style="display:flex; align-items:center; gap:12px;">
+          <!-- Notification button -->
+          <button id="notificationBtn" 
+        onclick="window.location.href='notification.html'" 
+        style="background:none; border:none; color:white; font-size:20px; cursor:pointer; position:relative;">
+    🔔
+    <span id="notificationBadge" 
+          style="position:absolute; top:-4px; right:-4px; background:red; color:white; font-size:10px; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+        
+    </span>
+</button>
+
+
+          <div style="text-align:right">
+            <small class="small">Admin</small>
+            <b>Owner</b>
+          </div>
+          <div class="avatar"></div>
+        </div>
+      </div>
+
+      <!-- Dashboard / Sections will go here -->
+
+
+
+      <!-- Dashboard content -->
+      <section id="dashboard" class="content-section">
+        <div class="grid">
+          <div class="card">
+            <div class="stat">
+              <div>
+                <div class="num" id="membersCount">0</div>
+                <div class="label">Active Members</div>
+              </div>
+              
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stat">
+              <div>
+                <div class="num" id="staffCount">0</div>
+                <div class="label">Staffs</div>
+              </div>
+              
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stat">
+              <div>
+                <div class="num" id="trainerCount">0</div>
+                <div class="label">Trainers</div>
+              </div>
+              
+            </div>
+          </div>
+          
+
+          <div class="card">
+            <div class="stat">
+              <div>
+                <div class="num" id="sessions">0</div>
+                <div class="label">Sessions</div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="card">
+          <div class="row" style="justify-content:space-between; align-items:center;">
+            <div>
+              <h3 style="margin:0">Recent Members</h3>
+              <div class="small muted">Latest signups</div>
+            </div>
+            <div class="row">
+              <input id="tableSearch" placeholder="Search members..." style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff" />
+              <button class="btn" id="exportBtn">Export</button>
+            </div>
+          </div>
+
+          <div class="table-wrap" style="margin-top:12px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th><th>Type</th><th>Plan</th><th>Start</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="membersTable">
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <tbody id="membersTable"></tbody>
+<tbody id="membersList"></tbody>
+
+
+      <!-- Members / Programs / Trainers sections (toggle visibility) -->
+      <section id="members" class="content-section" style="display:none">
+  <div class="card">
+    <h3>Members Management</h3>
+    <p class="small muted">Search and manage member subscriptions and profiles.</p>
+
+    <div style="margin-top:12px" class="row">
+      <input id="membersSearch" placeholder="Search member..." style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff; flex:1" />
+      <button class="btn" id="openAddMemberBtn" style="margin-left:8px;">Add Member</button>
+    </div>
+
+    <div id="addMemberPopup" class="popup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;">
+  <div style="background:#222; padding:20px; border-radius:12px; width:320px; color:#fff; position:relative;">
+    <h3>Add Member</h3>
+    <input type="text" id="firstName" placeholder="First Name" style="width:100%;margin:6px 0;padding:6px;">
+    <input type="text" id="lastName" placeholder="Last Name" style="width:100%;margin:6px 0;padding:6px;">
+    <input type="email" id="email" placeholder="Email" style="width:100%;margin:6px 0;padding:6px;">
+    <input type="date" id="birthday" placeholder="Birthday" style="width:100%;margin:6px 0;padding:6px;">
+    <select id="gender" style="width:100%;margin:6px 0;padding:6px;">
+      <option value="">Select Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+    <input type="text" id="contact" placeholder="Contact Number" style="width:100%;margin:6px 0;padding:6px;">
+    <input type="text" id="username" placeholder="Username" style="width:100%;margin:6px 0;padding:6px;">
+    <input type="password" id="password" placeholder="Password" style="width:100%;margin:6px 0;padding:6px;">
+    <select id="role" style="width:100%;margin:6px 0;padding:6px;">
+      <option value="">Select Role</option>
+      <option value="Member">Member</option>
+      <option value="Trainer">Trainer</option>
+      <option value="Staff">Staff</option>
+    </select>
+    <select id="status" style="width:100%;margin:6px 0;padding:6px;">
+      <option value="">Select Status</option>
+      <option value="Active">Active</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+
+    <!-- EDIT MEMBER POPUP -->
+<div id="editMemberPopup" class="popup" 
+     style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+     background:rgba(0,0,0,0.6);justify-content:center;align-items:center;">
+  <div style="background:#222; padding:20px; border-radius:12px; width:320px; color:#fff; position:relative;">
+    <h3>Edit Member</h3>
+
+    <input type="text" id="edit_firstName" placeholder="First Name" style="width:100%;margin:6px 0;padding:6px;">
+    <input type="text" id="edit_lastName" placeholder="Last Name" style="width:100%;margin:6px 0;padding:6px;">
+    <input type="email" id="edit_email" placeholder="Email" style="width:100%;margin:6px 0;padding:6px;">
+    <input type="text" id="edit_contact" placeholder="Contact Number" style="width:100%;margin:6px 0;padding:6px;">
+    <input type="text" id="edit_username" placeholder="Username" style="width:100%;margin:6px 0;padding:6px;">
+
+    <!-- Member-only fields -->
+    <div id="edit_membershipFields" style="display:none;">
+      <select id="edit_membershipType" style="width:100%;margin:6px 0;padding:6px;">
+        <option value="">Select Membership Type</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Student">Student</option>
+        <option value="Walk-in">Walk-in</option>
+        <option value="Personal Training">Personal Training</option>
+      </select>
+
+      <select id="edit_plan" style="width:100%;margin:6px 0;padding:6px;">
+        <option value="">Select Plan</option>
+        <option value="1 Month">1 Month</option>
+        <option value="3 Months">3 Months</option>
+        <option value="6 Months">6 Months</option>
+        <option value="12 Months">12 Months</option>
+      </select>
+
+      <input type="date" id="edit_startDate" style="width:100%;margin:6px 0;padding:6px;">
+      <input type="date" id="edit_endDate" style="width:100%;margin:6px 0;padding:6px;">
+    </div>
+
+    <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+      <button class="btn" id="saveEditBtn">Save</button>
+      <button class="btn" id="closeEditMemberBtn" style="margin-left:8px;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Membership Fields (only for Members) -->
+    <div id="membershipFields" style="display:none;">
+      <select id="membershipType" style="width:100%;margin:6px 0;padding:6px;">
+        <option value="">Select Membership Type</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Student">Student</option>
+        <option value="Walk-in">Walk-in</option>
+        <option value="Personal Training">Personal Training</option>
+      </select>
+      <select id="plan" style="width:100%;margin:6px 0;padding:6px;">
+        <option value="">Select Plan</option>
+        <option value="1 Month">1 Month</option>
+        <option value="3 Months">3 Months</option>
+        <option value="6 Months">6 Months</option>
+        <option value="12 Months">12 Months</option>
+      </select>
+      <input type="date" id="startDate" placeholder="Start Date" style="width:100%;margin:6px 0;padding:6px;">
+      <input type="date" id="endDate" placeholder="End Date" style="width:100%;margin:6px 0;padding:6px;">
+    </div>
+
+    <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+      <button class="btn" id="addMemberBtn">Add</button>
+      <button class="btn" id="closeAddMemberBtn" style="margin-left:8px;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+    <div class="table-wrap" style="margin-top:12px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Plan</th>
+            <th>Start</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="membersList">
+          <!-- Filtered members will appear here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="programs" class="content-section" style="display:none">
+  <div class="card" style="background: #1c1c1c; padding: 24px; border-radius: 12px; max-width: 700px; margin: auto;">
+    <h3 style="margin-top:0; color:#fff;">Programs</h3>
+    <p class="small muted" style="color: #ccc;">Edit, add, or remove gym programs and pricing.</p>
+    
+    <!-- Membership type selector -->
+    <div style="margin:12px 0;">
+      <label for="membershipType" style="color:#fff; margin-right:8px;">Select Membership:</label>
+      <select id="membershipType" style="padding:6px 12px; border-radius:6px; border:none; background:#333; color:#fff;">
+        <option value="Member">Member</option>
+        <option value="Walk-in">Walk-in</option>
+        <option value="Student">Student</option>
+        <option value="Personal Training">Personal Training</option>
+      </select>
+    </div>
+
+    <!-- Program list -->
+    <ul id="programList" class="small muted" style="margin-top:12px; padding-left: 0; list-style:none;">
+      <!-- dynamically generated -->
+    </ul>
+
+    <!-- Add program inputs -->
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+      <input type="text" id="newProgramName" placeholder="Program name" style="padding:8px; border-radius:6px; border:none; flex:1;">
+      <input type="number" id="newProgramPrice" placeholder="Price" style="padding:8px; border-radius:6px; border:none; flex:1;">
+      <button id="addProgram" style="padding:8px 16px; border-radius:6px; border:none; background:#5cb85c; color:#fff; cursor:pointer;">Add</button>
+    </div>
+  </div>
+</section>
+
+<script>
+// --- Fetch and display recent members ---
+async function fetchMembers() {
+  try {
+    const res = await fetch(`${API_URL}/members`);
+    return await res.json();
+  } catch (err) {
+    console.error("Failed to fetch members:", err);
+    return [];
+  }
+}
+
+
+
+
+// Initial load
+async function loadMembers() {
+  const members = await fetchMembers();
+
+  // Dashboard recent members
+  function renderMembersTable(members) {
+  const tbody = document.getElementById("membersTable");
+  tbody.innerHTML = "";
+
+  // Sort by startDate descending, latest first
+  members.sort((a, b) => {
+    const dateA = a.startDate ? new Date(a.startDate) : new Date(0);
+    const dateB = b.startDate ? new Date(b.startDate) : new Date(0);
+    return dateB - dateA;
+  });
+
+  // Show top 5 latest members
+  members.slice(0, 5).forEach(m => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${m.firstName} ${m.lastName}</td>
+      <td>${m.role}</td>
+      <td>${m.plan || '-'}</td>
+      <td>${m.startDate || '-'}</td>
+      <td>
+        <button class="btn small" onclick='openEditMember(${JSON.stringify(m)})'>Edit</button>
+
+        <button class="btn small">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+  
+  // Members section full list
+  renderMembersList(members);
+
+  // Update counts
+  document.getElementById('membersCount').textContent = members.filter(m => m.role === "Member").length;
+  document.getElementById('staffCount').textContent = members.filter(m => m.role === "Staff").length;
+  document.getElementById('trainerCount').textContent = members.filter(m => m.role === "Trainer").length;
+  document.getElementById('sessions').textContent = members.reduce((acc, m) => acc + (m.sessionsLeft && !isNaN(m.sessionsLeft) ? m.sessionsLeft : 0), 0);
+}
+
+// Search members
+document.getElementById('membersSearch').addEventListener('input', async (e) => {
+  const query = e.target.value.toLowerCase();
+  const members = await fetchMembers();
+  const filtered = members.filter(m =>
+    m.firstName.toLowerCase().includes(query) ||
+    m.lastName.toLowerCase().includes(query) ||
+    (m.username && m.username.toLowerCase().includes(query)) ||
+    (m.role && m.role.toLowerCase().includes(query)) ||
+    (m.membershipType && m.membershipType.toLowerCase().includes(query)) ||
+    (m.plan && m.plan.toLowerCase().includes(query))
+  );
+  renderMembersList(filtered);
+});
+function renderMembersList(members) {
+  const tbody = document.getElementById("membersList");
+  tbody.innerHTML = "";
+
+  const roles = ["Member", "Trainer", "Staff"];
+
+  roles.forEach(role => {
+    const roleMembers = members.filter(m => m.role === role);
+
+    if (roleMembers.length > 0) {
+      const trRoleHeader = document.createElement("tr");
+      trRoleHeader.innerHTML = `
+        <td colspan="5" style="font-weight:bold; background:#333;">${role}s</td>
+      `;
+      tbody.appendChild(trRoleHeader);
+
+      roleMembers.forEach(m => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.firstName} ${m.lastName}</td>
+          <td>${m.role}</td>
+          <td>${m.plan || '-'}</td>
+          <td>${m.startDate || '-'}</td>
+          <td>
+            <button class="btn small" onclick='openEditMember(${JSON.stringify(m)})'>Edit</button>
+            <button class="btn small">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  });
+}
+
+// OPEN EDIT POPUP
+function openEditMember(member) {
+  document.getElementById("editMemberPopup").style.display = "flex";
+
+  // Fill fields
+  document.getElementById("edit_firstName").value = member.firstName;
+  document.getElementById("edit_lastName").value = member.lastName;
+  document.getElementById("edit_email").value = member.email || "";
+  document.getElementById("edit_contact").value = member.contact || "";
+  document.getElementById("edit_username").value = member.username;
+
+  // Store ID
+  window.editingId = member._id;
+
+  // If Member, show membership fields
+  if (member.role === "Member") {
+    document.getElementById("edit_membershipFields").style.display = "block";
+    document.getElementById("edit_membershipType").value = member.membershipType || "";
+    document.getElementById("edit_plan").value = member.plan || "";
+    document.getElementById("edit_startDate").value = member.startDate || "";
+    document.getElementById("edit_endDate").value = member.endDate || "";
+  } else {
+    document.getElementById("edit_membershipFields").style.display = "none";
+  }
+}
+
+// CLOSE POPUP
+document.getElementById("closeEditMemberBtn").addEventListener("click", () => {
+  document.getElementById("editMemberPopup").style.display = "none";
+});
+
+// SAVE CHANGES
+document.getElementById("saveEditBtn").addEventListener("click", async () => {
+  const id = window.editingId;
+
+  const updated = {
+    firstName: document.getElementById("edit_firstName").value,
+    lastName: document.getElementById("edit_lastName").value,
+    email: document.getElementById("edit_email").value,
+    contact: document.getElementById("edit_contact").value,
+    username: document.getElementById("edit_username").value
+  };
+
+  if (document.getElementById("edit_membershipFields").style.display === "block") {
+    updated.membershipType = document.getElementById("edit_membershipType").value;
+    updated.plan = document.getElementById("edit_plan").value;
+    updated.startDate = document.getElementById("edit_startDate").value;
+    updated.endDate = document.getElementById("edit_endDate").value;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/updateMember/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated)
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert("Member updated successfully!");
+      document.getElementById("editMemberPopup").style.display = "none";
+      loadMembers();
+    } else {
+      alert(result.message || "Failed to update.");
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error.");
+  }
+});
+
+</script>
+
+
+
+      <section id="trainers" class="content-section" style="display:none">
+        <div class="card">
+          <h3>Trainers</h3>
+          <p class="small muted">Add or edit trainer profiles below.</p>
+
+          <div style="margin-top:12px" class="form-grid">
+            <input type="text" id="tname" placeholder="Trainer name" />
+            <input type="text" id="trole" placeholder="Specialty" />
+            <input class="full" type="text" id="tphoto" placeholder="Photo URL (optional)" />
+            <textarea class="full" id="tbio" placeholder="Short bio" rows="4"></textarea>
+            <div class="full" style="display:flex;justify-content:flex-end;">
+              <button class="btn" id="addTrainer">Add Trainer</button>
+            </div>
+          </div>
+          <div id="trainersList" style="margin-top:14px"></div>
+        </div>
+      </section>
+
+      <!-- ENHANCED PRICING MODULE FOR ADMIN (NO BUTTONS) -->
+<section id="pricing" class="content-section" style="display:none">
+  <div class="card">
+    <h3>Pricing Plans</h3>
+    <p class="small muted">View the current plans for reference.</p>
+
+    <div class="grid" style="margin-top:18px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
+      <!-- Monthly Plan -->
+      <div class="card" style="background: linear-gradient(145deg, rgba(255, 210, 66, 0.05), var(--card)); border-left: 4px solid var(--accent);">
+        <h4>Member</h4>
+        <p class="muted" style="margin:4px 0;">₱1,000 / month</p>
+        <p class="muted" style="margin:4px 0;">₱2,500 / 3 months</p>
+        <p class="muted" style="margin:4px 0;">₱4,500 / 6 months</p>
+        <p class="muted" style="margin:4px 0;">₱8,000 / 1 year</p>
+        <ul class="small muted">
+          <li>Unlimited gym access</li>
+          <li>Free locker</li>
+          <li>1 personal training session</li>
+        </ul>
+      </div>
+
+      <!-- Walk-in -->
+      <div class="card" style="background: linear-gradient(145deg, rgba(255, 210, 66, 0.05), var(--card)); border-left: 4px solid var(--accent);">
+        <h4>Walk-in</h4>
+        <p class="muted" style="margin:4px 0;">₱150 / day</p>
+        <ul class="small muted">
+          <li>Gym access only</li>
+          <li>No locker or towel</li>
+        </ul>
+      </div>
+
+      <!-- Student -->
+      <div class="card" style="background: linear-gradient(145deg, rgba(255, 210, 66, 0.05), var(--card)); border-left: 4px solid var(--accent);">
+        <h4>Student</h4>
+        <p class="muted" style="margin:4px 0;">₱800 / month</p>
+        <ul class="small muted">
+          
+          <li>Unlimited gym access</li>
+          <li>Locker included</li>
+        </ul>
+      </div>
+
+      <!-- Personal Training -->
+      <div class="card" style="background: linear-gradient(145deg, rgba(255, 210, 66, 0.05), var(--card)); border-left: 4px solid var(--accent);">
+        <h4>Personal Training</h4>
+        <p class="muted" style="margin:4px 0;">₱2,500 (5 sessions)</p>
+        <p class="muted" style="margin:4px 0;">₱2,750 (8 sessions)</p>
+        <p class="muted" style="margin:4px 0;">₱3,000 (10 sessions)</p>
+        <p class="muted" style="margin:4px 0;">₱3,500 (15 sessions)</p>
+        <p class="muted" style="margin:4px 0;">₱4,500 (Unlimited)</p>
+        <p class="muted" style="margin:4px 0;">₱8,500 (2 months / 40 sessions)</p>
+        <p class="muted" style="margin:4px 0;">₱11,500 (3 months / 60 sessions)</p>
+        <p class="muted" style="margin:4px 0;">₱500 / session (Walk-in)</p>
+        <ul class="small muted">
+          <li>Gym access</li>
+          <li>Personal training sessions</li>
+          <li>Nutrition plan</li>
+        </ul>
+      </div>
+
+      
+    </div>
+  </div>
+</section>
+      <section id="contact" class="content-section" style="display:none">
+        <div class="card">
+          <h3>Contact Info</h3>
+          <p class="small muted">Address, phone and social links.</p>
+          <div style="margin-top:12px">
+            <p><strong>Address:</strong> 123 Fitness Street, Carmona, Cavite</p>
+            <p><strong>Phone:</strong> +63 912 345 6789</p>
+            <p><strong>Facebook:</strong> <a target="_blank" href="https://www.facebook.com/profile.php?id=61551117331924">Fit and Lift</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="settings" class="content-section" style="display:none">
+  <div class="card">
+    <h3>Settings</h3>
+    <p class="small muted">Manage your account preferences, security, and profile information.</p>
+
+    <div style="margin-top:18px;">
+      <h4 style="color:var(--accent); margin-bottom:8px;">Profile</h4>
+      <div class="form-grid">
+
+        <input id="fullName" type="text" placeholder="Full Name" />
+        <input id="email" type="email" placeholder="Email Address" />
+        <input id="userName" type="text" placeholder="Username" />
+        <input id="role" type="text" placeholder="Role" />
+
+        <div class="full" style="display:flex;justify-content:flex-end;">
+          <button id="updateAdminProfile" class="btn">Update Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+
+  // Load Admin Details
+  async function loadAdminDetails() {
+    try {
+
+      const res = await fetch(`${API_URL}/admin/details`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch admin data");
+
+      const data = await res.json();
+      const admin = data.admin || data;  // supports both {admin: {...}} or {...}
+
+      // Populate fields
+      document.getElementById("fullName").value = admin.fullName || "";
+      document.getElementById("email").value = admin.email || "";
+      document.getElementById("userName").value = admin.username || "";
+      document.getElementById("role").value = admin.role || "";
+
+    } catch (err) {
+      console.error("Error loading admin details:", err);
+    }
+  }
+
+  // Load admin info *when clicking Settings*
+  document.querySelector('a[data-section="settings"]').addEventListener("click", loadAdminDetails);
+
+
+  // Update admin profile
+  document.getElementById("updateAdminProfile").addEventListener("click", async () => {
+
+    const updatedAdmin = {
+      fullName: document.getElementById("fullName").value,
+      email: document.getElementById("email").value,
+      username: document.getElementById("userName").value,
+      role: document.getElementById("role").value
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/admin/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(updatedAdmin)
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        alert("Admin profile updated successfully!");
+      } else {
+        alert(result.message || "Failed to update admin profile.");
+      }
+
+    } catch (err) {
+      console.error("Error updating admin profile:", err);
+    }
+  });
+
+  
+// --- Popup controls ---
+function openAddMemberPopup() {
+  document.getElementById("addMemberPopup").style.display = "flex";
+}
+
+function closeAddMemberPopup() {
+  document.getElementById("addMemberPopup").style.display = "none";
+}
+
+// Event listeners
+document.getElementById("openAddMemberBtn").addEventListener("click", openAddMemberPopup);
+document.getElementById("closeAddMemberBtn").addEventListener("click", closeAddMemberPopup);
+
+// Show membership fields only if role is Member
+document.getElementById("role").addEventListener("change", () => {
+  const role = document.getElementById("role").value;
+  document.getElementById("membershipFields").style.display = role === "Member" ? "block" : "none";
+});
+
+// --- Add Member Function ---
+async function addMember() {
+  const role = document.getElementById('role').value;
+  const data = {
+    firstName: document.getElementById('firstName').value.trim(),
+    lastName: document.getElementById('lastName').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    birthday: document.getElementById('birthday').value,
+    gender: document.getElementById('gender').value,
+    contact: document.getElementById('contact').value.trim(),
+    username: document.getElementById('username').value.trim(),
+    password: document.getElementById('password').value,
+    role: role,
+    status: document.getElementById('status').value
+  };
+
+  if(role === 'Member') {
+    data.membershipType = document.getElementById('membershipType').value;
+    data.plan = document.getElementById('plan').value;
+    data.startDate = document.getElementById('startDate').value;
+    data.endDate = document.getElementById('endDate').value;
+
+    if(!data.membershipType || !data.plan || !data.startDate || !data.endDate){
+      alert("Fill all membership fields!");
+      return;
+    }
+  }
+
+  if(!data.firstName || !data.lastName || !data.username || !data.password){
+    alert("Fill all required fields!");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/addMember`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if(res.ok && result.success){
+      alert("Member added successfully!");
+      closeAddMemberPopup();
+      loadMembers();
+    } else {
+      alert(result.message || "Failed to add member.");
+    }
+  } catch(err) {
+    console.error(err);
+    alert("Failed to connect to server.");
+  }
+}
+
+document.getElementById("addMemberBtn").addEventListener("click", addMember);
+
+document.getElementById("notificationBtn").addEventListener("click", () => {
+  alert("You clicked notifications!"); 
+  // You can toggle a dropdown or open a notifications section here
+});
+
+</script>
+
+
+
+
+
+  
+</body>
+</html>

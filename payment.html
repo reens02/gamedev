@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fit & Lift – Payment Options</title>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #000000);
+        color: white;
+        min-height: 100vh;
+        padding: 40px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 40px;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    p {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 18px;
+        opacity: 0.8;
+    }
+
+    .payment-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    .payment-card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 25px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: 0.3s ease-in-out;
+        cursor: pointer;
+    }
+
+    .payment-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: #ffdb4d;
+        box-shadow: 0 0 18px rgba(255, 219, 77, 0.4);
+    }
+
+    .payment-card img {
+        width: 90px;
+        height: auto;
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+
+    .payment-card h2 {
+        margin: 0;
+        font-size: 22px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .payment-card p {
+        margin: 0;
+        font-size: 15px;
+        opacity: 0.7;
+    }
+
+    /* FOOTER BUTTON */
+    .confirm-btn {
+        display: block;
+        width: 300px;
+        margin: 40px auto 0;
+        padding: 15px;
+        background: #ffdb4d;
+        color: black;
+        font-size: 18px;
+        text-align: center;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+    .confirm-btn:hover {
+        background: white;
+    }
+
+    .payment-card.selected {
+    border: 2px solid #ffdb4d;
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(255, 219, 77, 0.6);
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Choose Your Payment Method</h1>
+<p>Select how you want to pay for your membership.</p>
+
+<div class="payment-container">
+
+    <!-- WALK-IN PAYMENT -->
+    <div class="payment-card"data-url="member.html">
+        <img src="https://scontent.fmnl30-1.fna.fbcdn.net/v/t39.30808-6/415702971_122142918422037244_6595707025215560852_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGkbxDPDBW7KFTJzf_BuMgx8N5jw1zwZH3w3mPDXPBkffeBdllpscJ_xqVWbpWwRoJj8dhyf1dQmM3Sj86292Qu&_nc_ohc=H7G5sJJxk-IQ7kNvwEmAV9k&_nc_oc=Adk4FxL7rfpuYTg2lTbdRwLJrAwbRBs94WkxSdBgOZrFE9zGGqrkh7G5eWFED_hqjg4&_nc_zt=23&_nc_ht=scontent.fmnl30-1.fna&_nc_gid=5ZrW6IUj0kGPx9sbG6avyw&oh=00_AfjyTybeEVw_U5CCM8mCidxKJbSbFP2tLuczi27oo3rVaA&oe=692237E2">
+        <h2>Walk-In Payment</h2>
+        <p>Pay directly at the gym counter.</p>
+    </div>
+
+    <!-- GCASH -->
+    <div class="payment-card"data-url="gcashQR.html">
+        <img src="https://serious-studio.com/wp-content/uploads/Gcash-Brand-Identity-01.png">
+        <h2>GCash</h2>
+        <p>Secure digital wallet payment.</p>
+    </div>
+
+    <!-- MAYA -->
+    <div class="payment-card"data-url="paymaya.html">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/PayMaya_Logo.png">
+        <h2>Maya</h2>
+        <p>Fast and easy cashless payment.</p>
+    </div>
+</div>
+
+<a href="member.html" class="confirm-btn">Continue</a>
+
+<script>
+
+
+const cards = document.querySelectorAll(".payment-card");
+
+cards.forEach(card => {
+    card.addEventListener("click", () => {
+        cards.forEach(c => c.classList.remove("selected"));
+        card.classList.add("selected");
+
+        const paymentMethod = card.querySelector("h2").textContent;
+        const redirectUrl = card.getAttribute("data-url"); // get URL from attribute
+        localStorage.setItem("paymentMethod", paymentMethod);
+
+        // Navigate to the specific page
+        window.location.href = redirectUrl;
+    });
+});
+
+
+</script>
+
+
+</body>
+</html>

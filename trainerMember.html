@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Members - Fit and Lift</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* Your existing CSS remains the same */
+* { box-sizing: border-box; margin:0; padding:0; }
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(180deg, #0a0a0a 0%, #121212 100%);
+    color: #fff;
+    width:100%;
+    height:100%;
+    overflow-x:hidden;
+}
+
+/* Navbar */
+nav {
+    position: fixed;
+    top:0; left:0; width:100%;
+    background: rgba(0,0,0,0.95);
+    padding:15px 40px;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index:1000;
+}
+nav .logo { font-size:26px; font-weight:bold; color:#f9d342; text-shadow:1px 1px 6px rgba(0,0,0,0.6);}
+nav ul { list-style:none; display:flex; gap:25px; }
+nav ul li a { text-decoration:none; color:#fff; font-weight:500; position:relative; transition:0.3s; }
+nav ul li a::after { content:''; position:absolute; width:0; height:2px; background:#f9d342; left:0; bottom:-4px; transition:0.3s; }
+nav ul li a:hover { color:#f9d342; }
+nav ul li a:hover::after { width:100%; }
+
+/* Container */
+.container { max-width:1200px; width:90%; margin:25px auto; padding-top:90px; }
+h1 { text-align:center; color:#f9d342; margin-bottom:20px; }
+h2 { margin-top:25px; color:#f9d342; border-left:5px solid #f9d342; padding-left:10px; }
+
+/* Card */
+.card { background: rgba(255,255,255,0.05); padding:20px; border-radius:16px; margin-top:15px; box-shadow:0 6px 20px rgba(0,0,0,0.5);}
+input, select { padding:10px; margin:5px; border-radius:8px; width:200px; border:none; background: rgba(255,255,255,0.1); color:#fff; }
+button { padding:10px 15px; border-radius:8px; border:none; cursor:pointer; font-weight:bold; background:linear-gradient(90deg,#f9d342,#ffc107); color:#000; transition:all 0.3s; }
+button:hover { background:linear-gradient(90deg,#ffc107,#f9d342); transform:translateY(-2px) scale(1.02); box-shadow:0 8px 20px rgba(0,0,0,0.5); }
+
+table { width:100%; margin-top:15px; border-collapse:collapse; overflow:hidden; background: rgba(0,0,0,0.2); border-radius:10px; }
+th, td { padding:12px; border-bottom:1px solid #333; }
+th { background:#f9d342; color:#000; }
+tr:hover { background: rgba(255,255,255,0.1); }
+
+.action-btn { padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer; border:none; color:#fff; }
+.edit { background:#4caf50; }
+.delete { background:#f44336; }
+.view { background:#2196f3; }
+
+/* Modal */
+.modal {
+    display:none;
+    position:fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.8);
+    justify-content:center;
+    align-items:center;
+    z-index:2000;
+}
+.modal-content {
+    background:#121212;
+    padding:30px;
+    border-radius:12px;
+    width:90%;
+    max-width:400px;
+    text-align:center;
+    position:relative;
+}
+.modal-content input, .modal-content select { width:90%; margin:10px 0; padding:10px; border-radius:8px; border:none; background:#1a1a1a; color:#fff; }
+.modal-content select option { background:#1a1a1a; color:#fff; }
+.modal-content h2 { color:#f9d342; margin-bottom:15px; }
+.close-btn { position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer; color:#f9d342; }
+.modal-content .confirm-btn { background:#f44336; color:#fff; margin-right:10px; }
+.modal-content .cancel-btn { background:#4caf50; color:#fff; }
+
+/* Responsive */
+@media (max-width:768px) {
+    input, select { width:100%; }
+    nav ul { flex-direction: column; gap:10px; }
+    .container { width:95%; padding-top:100px; }
+}
+@media (max-width:480px) { nav { padding:12px 20px; } }
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">Fit and Lift</div>
+    <ul>
+        <li><a href="trainerDashboard.html">Dashboard</a></li>
+        <li><a href="trainerdashboardmembers.html" style="color:#f9d342;">Members</a></li>
+        <li><a href="trainerdashboardattendance.html">Attendance</a></li>
+        <li><a href="login.html">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <h1>Members</h1>
+
+    <h2>Add Member</h2>
+    <div class="card">
+        <button onclick="openAddModal()">Add Member</button>
+
+        <table id="memberTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Membership Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table rows will be populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeAddModal()">&times;</span>
+        <h2>Add Member</h2>
+        <input type="text" id="mNameInput" placeholder="Member Name">
+        <select id="mTypeInput">
+            <option>Regular with Trainer</option>
+            <option>Student/PWD with Trainer</option>
+            <option>Premium with Trainer</option>
+        </select>
+        <button onclick="confirmAdd()">Add</button>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeEditModal()">&times;</span>
+        <h2>Edit Member</h2>
+        <input type="text" id="editName">
+        <select id="editType">
+            <option>Regular with Trainer</option>
+            <option>Student/PWD with Trainer</option>
+            <option>Premium with Trainer</option>
+        </select>
+        <button onclick="confirmEdit()">Save</button>
+    </div>
+</div>
+
+<!-- View Modal -->
+<div id="viewModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeViewModal()">&times;</span>
+        <h2>View Member</h2>
+        <p id="viewName"></p>
+        <p id="viewType"></p>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to remove this member?</p>
+        <button class="confirm-btn" onclick="confirmDelete()">Yes</button>
+        <button class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+    </div>
+</div>
+<script>
+const API_URL = "http://127.0.0.1:5000"; // Your backend URL
+let currentEditRow = null;
+let currentDeleteRow = null;
+
+// Fetch and display all members
+async function loadMembers() {
+    try {
+        console.log("Loading members from API...");
+        const res = await fetch(`${API_URL}/members`);
+        
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        console.log("Members data:", data);
+
+        const tableBody = document.getElementById("memberTable").querySelector("tbody");
+        tableBody.innerHTML = ""; // clear existing rows
+
+        if (data.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="3" style="text-align: center;">No members found</td></tr>`;
+            return;
+        }
+
+        data.forEach(member => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>${member.firstName} ${member.lastName}</td>
+                <td>${member.membershipType || "N/A"}</td>
+                <td>
+                    <button class='action-btn edit' onclick='openEditModal(this.parentElement.parentElement)'>Edit</button>
+                    <button class='action-btn delete' onclick='openDeleteModal(this.parentElement.parentElement)'>Delete</button>
+                    <button class='action-btn view' onclick='openViewModal(this.parentElement.parentElement)'>View</button>
+                </td>
+            `;
+            // Store the username in the row's dataset for delete operations
+            row.dataset.username = member.username;
+            console.log(`Added member: ${member.firstName} ${member.lastName} (username: ${member.username})`);
+        });
+    } catch (err) {
+        console.error("Failed to load members:", err);
+        const tableBody = document.getElementById("memberTable").querySelector("tbody");
+        tableBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #f44336;">Error loading members: ${err.message}</td></tr>`;
+    }
+}
+
+// Call loadMembers on page load
+window.onload = loadMembers;
+
+// --- Modals & actions ---
+function openAddModal(){ 
+    document.getElementById("addModal").style.display="flex"; 
+}
+
+function closeAddModal(){ 
+    document.getElementById("addModal").style.display="none"; 
+}
+
+function openEditModal(row){
+    currentEditRow = row;
+    document.getElementById("editName").value = row.cells[0].innerText;
+    document.getElementById("editType").value = row.cells[1].innerText;
+    document.getElementById("editModal").style.display="flex";
+}
+
+function closeEditModal(){ 
+    document.getElementById("editModal").style.display="none"; 
+}
+
+function openViewModal(row){
+    document.getElementById("viewName").innerText = "Name: " + row.cells[0].innerText;
+    document.getElementById("viewType").innerText = "Membership Type: " + row.cells[1].innerText;
+    document.getElementById("viewModal").style.display="flex";
+}
+
+function closeViewModal(){ 
+    document.getElementById("viewModal").style.display="none"; 
+}
+
+function openDeleteModal(row){ 
+    console.log("Opening delete modal for row:", row);
+    console.log("Row dataset:", row.dataset);
+    currentDeleteRow = row; 
+    document.getElementById("deleteModal").style.display="flex"; 
+}
+
+function closeDeleteModal(){ 
+    document.getElementById("deleteModal").style.display="none"; 
+}
+
+// Add Member (call backend)
+async function confirmAdd(){
+    let name = document.getElementById("mNameInput").value;
+    let type = document.getElementById("mTypeInput").value;
+    if(!name || !type){ 
+        alert("Fill all fields!"); 
+        return; 
+    }
+
+    const [firstName, lastName] = name.split(" ");
+    const username = firstName.toLowerCase() + Math.floor(Math.random()*1000);
+    const password = "TempPassword123!"; // Default password
+    
+    const payload = { 
+        firstName: firstName || name, 
+        lastName: lastName || "", 
+        membershipType: type, 
+        username: username,
+        password: password
+    };
+
+    try {
+        console.log("Adding member:", payload);
+        const res = await fetch(`${API_URL}/addMember`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if(res.ok){
+            closeAddModal();
+            loadMembers(); // reload table
+            alert("Member added successfully!");
+            // Clear input fields
+            document.getElementById("mNameInput").value = "";
+            document.getElementById("mTypeInput").value = "Regular with Trainer";
+        } else {
+            alert("Error adding member: " + data.message);
+        }
+    } catch(err) {
+        console.error(err);
+        alert("Error adding member: " + err.message);
+    }
+}
+
+// Edit Member
+async function confirmEdit() {
+    if (!currentEditRow) {
+        alert("No member selected for editing");
+        return;
+    }
+
+    const username = currentEditRow.dataset.username;
+    const newName = document.getElementById("editName").value;
+    const newType = document.getElementById("editType").value;
+
+    if (!newName || !newType) {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    const [firstName, lastName] = newName.split(" ");
+
+    try {
+        console.log("Updating member:", { username, firstName, lastName, newType });
+        const res = await fetch(`${API_URL}/trainer_sched`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: username,
+                firstName: firstName || newName,
+                lastName: lastName || "",
+                membershipType: newType
+            })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            closeEditModal();
+            loadMembers(); // Refresh table
+            alert("Member updated successfully!");
+        } else {
+            alert("Failed to update member: " + data.message);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error updating member: " + err.message);
+    }
+}
+
+// Delete Member
+async function confirmDelete() {
+    if (!currentDeleteRow) {
+        alert("No member selected for deletion");
+        return;
+    }
+
+    const username = currentDeleteRow.dataset.username;
+    
+    if (!username) {
+        alert("Error: Could not find member username");
+        console.error("No username found in row dataset:", currentDeleteRow.dataset);
+        return;
+    }
+
+    console.log("Deleting member with username:", username);
+
+    try {
+        const res = await fetch(`${API_URL}/deleteMember`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: username })
+        });
+
+        const data = await res.json();
+        console.log("Delete response:", data);
+
+        if (res.ok && data.success) {
+            closeDeleteModal();
+            loadMembers(); // Refresh table
+            alert("Member deleted successfully!");
+        } else {
+            alert("Failed to delete member: " + (data.message || "Unknown error"));
+        }
+    } catch (err) {
+        console.error("Delete error:", err);
+        alert("Error deleting member: " + err.message);
+    }
+}
+
+// Close modals when clicking outside
+window.onclick = function(e){
+    if(e.target == document.getElementById("addModal")) closeAddModal();
+    if(e.target == document.getElementById("editModal")) closeEditModal();
+    if(e.target == document.getElementById("viewModal")) closeViewModal();
+    if(e.target == document.getElementById("deleteModal")) closeDeleteModal();
+}
+</script>
+
+</body>
+</html>

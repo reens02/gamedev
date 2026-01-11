@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fit & Lift – Subscription Plans</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: #101010 url('https://images.unsplash.com/photo-1594737625785-cd503d5ed3d7?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Navbar */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    transition: background 0.3s;
+  }
+
+  nav:hover {
+    background: rgba(0,0,0,0.95);
+  }
+
+  nav .logo {
+    font-size: 26px;
+    font-weight: bold;
+    color: #f9d342;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.6);
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+  }
+
+  nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s;
+  }
+
+  nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: #f9d342;
+    left: 0;
+    bottom: -5px;
+    transition: 0.3s;
+  }
+
+  nav ul li a:hover::after {
+    width: 100%;
+  }
+
+  nav ul li a:hover {
+    color: #f9d342;
+  }
+
+  header {
+    margin-top: 80px;
+    background: rgba(0,0,0,0.6);
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #f9d342;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+    text-shadow: 1px 1px 4px black;
+  }
+
+  .container {
+    width: 90%;
+    max-width: 1300px;
+    margin: 40px auto;
+  }
+
+  h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #f9d342;
+    text-shadow: 1px 1px 3px black;
+  }
+
+  /* Membership selector cards */
+  .membership-types {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 40px;
+  }
+
+  .membership-card {
+    background: rgba(28,28,28,0.85);
+    width: 180px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    padding: 15px;
+    transition: 0.3s;
+    border: 2px solid transparent;
+  }
+
+  .membership-card.active, .membership-card:hover {
+    border: 2px solid #f9d342;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(249,211,66,0.5);
+  }
+
+  .membership-card img {
+    width: 100%;
+    border-radius: 10px;
+    height: 100px;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+
+  .membership-card h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #f9d342;
+  }
+
+  /* Plan cards */
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+  }
+
+  .plan-box {
+    background: rgba(28,28,28,0.85);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #333;
+    transition: 0.35s;
+    cursor: pointer;
+    text-align: center;
+    padding: 20px 15px;
+    backdrop-filter: blur(4px);
+  }
+
+  .plan-box:hover {
+    transform: scale(1.05);
+    border-color: #f9d342;
+    box-shadow: 0 5px 15px rgba(249,211,66,0.4);
+  }
+
+  .plan-box img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    transition: transform 0.4s;
+  }
+
+  .plan-box:hover img {
+    transform: scale(1.1);
+  }
+
+  .plan-box h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: #f9d342;
+  }
+
+  .plan-box p {
+    opacity: 0.85;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  .plan-box button {
+    background: #f9d342;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .plan-box button:hover {
+    background: #ffcc00;
+  }
+
+  @media(max-width: 768px){
+    .membership-types {
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      font-size: 26px;
+      margin-top: 100px;
+    }
+  }
+
+  @media(max-width: 480px){
+    .plan-box h3 {
+      font-size: 18px;
+    }
+    .plan-box p {
+      font-size: 14px;
+    }
+    .plan-box button {
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div class="logo">Fit and Lift</div>
+  <ul>
+    <li><a href="member.html">Dashboard</a></li>
+    <li><a href="login.html">Logout</a></li>
+  </ul>
+</nav>
+
+<header>Fit & Lift – Subscription Plans</header>
+
+<div class="container">
+  <h2>Choose Your Membership Type</h2>
+
+  <div class="membership-types" id="membershipSelector">
+    <div class="membership-card active" data-type="Member">
+      <img src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba" alt="Member">
+      <h4>Member</h4>
+    </div>
+    <div class="membership-card" data-type="Walk-in">
+      <img src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1" alt="Walk-in">
+      <h4>Walk-in</h4>
+    </div>
+    <div class="membership-card" data-type="Student">
+      <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438" alt="Student">
+      <h4>Student</h4>
+    </div>
+    <div class="membership-card" data-type="Personal Training">
+      <img src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74" alt="Personal Training">
+      <h4>Personal Training</h4>
+    </div>
+  </div>
+
+  <div class="plans" id="plansContainer"></div>
+</div>
+
+<script>
+
+const API_URL = "http://127.0.0.1:5000"; 
+
+const planImages = {
+  "Member": "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=400&q=80",
+  "Walk-in": "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=400&q=80",
+  "Student": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=400&q=80",
+  "Personal Training": "https://images.unsplash.com/photo-1554284126-aa88f22d8b74?auto=format&fit=crop&w=400&q=80"
+};
+
+const plansData = {
+  "Member": ["₱1,000 / month", "₱2,500 / 3 months", "₱4,500 / 6 months", "₱8,000 / 1 year"],
+  "Walk-in": ["₱150 / day"],
+  "Student": ["₱800 / month"],
+  "Personal Training": [
+    "₱2,500 (5 sessions)", "₱2,750 (8 sessions)", "₱3,000 (10 sessions)",
+    "₱3,500 (15 sessions)", "₱4,500 (Unlimited)", "₱8,500 (2 months / 40 sessions)",
+    "₱11,500 (3 months / 60 sessions)", "₱500 / session (Walk-in)"
+  ]
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const membershipCards = document.querySelectorAll('.membership-card');
+
+  membershipCards.forEach(card => {
+    card.addEventListener('click', () => {
+      membershipCards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      showPlans(card.dataset.type);
+    });
+  });
+
+  // Default load
+  showPlans();
+});
+
+function showPlans(type = 'Member') {
+  const container = document.getElementById('plansContainer');
+  container.innerHTML = '';
+  plansData[type].forEach(plan => {
+    const box = document.createElement('div');
+    box.className = 'plan-box';
+    box.innerHTML = `
+      <img src="${planImages[type]}" alt="${type}">
+      <h3>${plan}</h3>
+      <p>${type} Plan</p>
+      <button data-membership="${type}" data-plan="${plan}">Select</button>
+    `;
+    box.querySelector('button').addEventListener('click', () => updatePlan(type, plan));
+    container.appendChild(box);
+  });
+}
+
+
+async function updatePlan(membershipType, plan) {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user || !user.username) return alert("⚠ You must be logged in.");
+
+  try {
+    const res = await fetch(`${API_URL}/update-plan`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: user.username,
+        membershipType,
+        plan
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) return alert("Error: " + data.message);
+
+    // Update localStorage
+    user.membershipType = membershipType;
+    user.plan = plan;
+    user.startDate = new Date().toISOString().slice(0, 10);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    alert("✅ Membership updated successfully!");
+    window.location.href = "payment.html";
+  } catch (err) {
+    console.error(err);
+    alert("⚠ Failed to update membership.");
+  }
+}
+
+// Default load
+showPlans();
+</script>
+</body>
+</html>

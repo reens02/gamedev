@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment QR Display</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #101010;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 40px;
+  }
+
+  h1 {
+    color: #ffdb4d;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .qr-container {
+    width: 300px;
+    height: 300px;
+    border: 2px dashed #ffdb4d;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: #1a1a1a;
+    margin-bottom: 30px;
+  }
+
+  .qr-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .confirm-btn {
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #101010;
+    background: #ffdb4d;
+    text-decoration: none;
+    border-radius: 10px;
+    border: 2px solid #ffdb4d;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 219, 77, 0.4);
+  }
+
+  .confirm-btn:hover {
+    background: transparent;
+    color: #ffdb4d;
+    border-color: #ffdb4d;
+    box-shadow: 0 8px 20px rgba(255, 219, 77, 0.6);
+    transform: translateY(-3px);
+  }
+</style>
+</head>
+<body>
+
+<h1>Scan Payment QR Code</h1>
+
+<div class="qr-container">
+  <img src="paymaya.jpg" alt="Payment QR">
+</div>
+
+<a href="member.html" class="confirm-btn">Continue</a>
+
+</body>
+</html>

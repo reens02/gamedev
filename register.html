@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="script.js" defer></script>
+<title>Gym Register - Fit and Lift</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: black;
+    color: #fff;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top:0; left:0;
+    width: 100%;
+    height: 100%;
+    background: url('https://images.unsplash.com/photo-1558611848-73f7eb4001a1') no-repeat center center/cover;
+    filter: blur(6px) brightness(0.5);
+    z-index: -1;
+  }
+
+  /* Navbar */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    flex-wrap: wrap;
+  }
+
+  nav .logo {
+    font-size: 26px;
+    font-weight: bold;
+    color: #f9d342;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+  }
+
+  nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    position: relative;
+    transition: 0.3s;
+  }
+
+  nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: #f9d342;
+    left: 0;
+    bottom: -4px;
+    transition: 0.3s;
+  }
+
+  nav ul li a:hover::after {
+    width: 100%;
+  }
+
+  nav ul li a:hover {
+    color: #f9d342;
+  }
+
+  /* Register container */
+  .register-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.85);
+    padding: 40px;
+    border-radius: 16px;
+    width: 380px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    text-align: center;
+  }
+
+  .register-container h2 {
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #f9d342;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.7);
+  }
+
+  .register-container input,
+  .register-container select {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    font-size: 14px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .register-container input:focus,
+  .register-container select:focus {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.02);
+  }
+
+  .register-container select option {
+    color: #000;
+  }
+
+  /* Buttons */
+  .register-container button {
+    width: 100%;
+    background: linear-gradient(90deg, #f9d342, #ffc107);
+    color: #000;
+    font-weight: bold;
+    padding: 14px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .register-container button:hover {
+    background: linear-gradient(90deg, #ffc107, #f9d342);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  }
+
+  .register-container a {
+    display: block;
+    margin-top: 15px;
+    color: #f9d342;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+  }
+
+  .register-container a:hover {
+    color: #ffc107;
+    text-decoration: underline;
+  }
+
+  #message {
+    margin-top: 10px;
+    color: #ff3d00;
+  }
+
+  @media (max-width: 480px) {
+    .register-container {
+      width: 90%;
+      padding: 30px;
+    }
+
+    .register-container h2 {
+      font-size: 24px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">Fit and Lift</div>
+    <ul>
+      <li><a href="home.html">Home</a></li>
+      <li><a href="programs.html">Programs</a></li>
+      <li><a href="trainers.html">Trainers</a></li>
+      <li><a href="contacts.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Register Box -->
+  <div class="register-container">
+    <h2>Register</h2>
+
+    <input type="text" id="firstName" placeholder="First Name">
+    <input type="text" id="lastName" placeholder="Last Name">
+
+    <select id="gender">
+      <option value="">Select Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <input type="date" id="birthday" placeholder="Birthday">
+    <input type="tel" id="phone" placeholder="Contact Number (e.g. +639XXXXXXXXX)">
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="text" id="regUsername" placeholder="Username">
+    <input type="password" id="regPassword" placeholder="Password">
+
+<button onclick="register()">Register</button>
+<a href="login.html">Already have an account?</a>
+
+<p id="message"></p>
+
+  </div>
+</body>
+</html>

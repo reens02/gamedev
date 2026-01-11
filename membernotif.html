@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member Notifications</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #101010;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* Notification Box */
+    #notificationsContainer {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
+
+    #notificationsContainer h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-weight: 600;
+      color: #4caf50;
+      text-align: center;
+    }
+
+    .notification-item {
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      border-left: 4px solid #4caf50;
+      transition: background 0.2s;
+    }
+
+    .notification-item:hover {
+      background: #333;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 5px;
+    }
+
+    .notification-meta {
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div id="notificationsContainer">
+    <h2>Admin Notifications</h2>
+    <div id="notificationsList">
+      <!-- Notifications from admin will appear here -->
+    </div>
+  </div>
+
+  <script>
+    // Example notifications (static)
+    const notificationsData = [
+      {title: "Gym Closed", message: "The gym will be closed on Dec 25 for Christmas.", date: "2025-12-01T10:00:00"},
+      {title: "New Class Available", message: "Sign up now for the new Zumba class starting next week.", date: "2025-12-05T15:30:00"}
+    ];
+
+    function renderNotifications(listElement, data) {
+      listElement.innerHTML = '';
+      if (data.length === 0) {
+        listElement.innerHTML = '<div style="text-align:center; color:#aaa;">No notifications received yet</div>';
+        return;
+      }
+
+      data.forEach(notif => {
+        const item = document.createElement('div');
+        item.className = 'notification-item';
+        item.innerHTML = `
+          <div class="notification-title">${notif.title}</div>
+          <div class="notification-meta">Sent: ${new Date(notif.date).toLocaleString()}</div>
+          <div class="notification-message">${notif.message}</div>
+        `;
+        listElement.appendChild(item);
+      });
+    }
+
+    // Render example notifications
+    const list = document.getElementById('notificationsList');
+    renderNotifications(list, notificationsData);
+  </script>
+
+  <script>
+    // Fetch notifications from backend
+    const memberId = "MEMBER_OBJECT_ID"; // replace with logged-in member's MongoDB _id
+
+    async function loadNotifications() {
+      try {
+        const res = await fetch(`/api/member/notifications/${memberId}`);
+        const data = await res.json();
+        const list = document.getElementById('notificationsList');
+
+        renderNotifications(list, data);
+
+        // Update badge if exists
+        const badge = document.getElementById('notificationBadge');
+        if (badge) badge.innerText = data.length;
+      } catch(err) {
+        console.error(err);
+      }
+    }
+
+    loadNotifications();
+    setInterval(loadNotifications, 30000); // auto-refresh every 30s
+  </script>
+</body>
+</html>

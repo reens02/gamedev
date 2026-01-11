@@ -1,0 +1,422 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fit & Lift – Subscription Plans</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family:'Roboto',sans-serif;
+  background:#101010 url('https://images.unsplash.com/photo-1594737625785-cd503d5ed3d7?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+  background-size:cover;
+  color:white;
+  padding-top:120px; /* space for navbar */
+  margin:0;
+}
+
+/* Navbar */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+  flex-wrap: wrap;
+}
+
+nav .logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #f9d342;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  position: relative;
+  transition: 0.3s;
+}
+
+nav ul li a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background: #f9d342;
+  left: 0;
+  bottom: -4px;
+  transition: 0.3s;
+}
+
+nav ul li a:hover::after {
+  width: 100%;
+}
+
+nav ul li a:hover {
+  color: #f9d342;
+}
+
+/* Hamburger button */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+.hamburger div {
+  width: 25px;
+  height: 3px;
+  background: #f9d342;
+  border-radius: 2px;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background: #121212;
+  z-index: 1500;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: 0.3s;
+}
+.sidebar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+}
+.sidebar a:hover {
+  color: #f9d342;
+}
+
+/* TITLE */
+h1 {
+  text-align:center;
+  color:#f9d342;
+  margin-bottom:50px;
+  text-shadow:2px 2px 15px black, 0 0 20px #f9d342;
+  font-size:44px;
+  letter-spacing:1px;
+}
+
+/* PLAN CONTAINER */
+.plan-type-container {
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:35px;
+  width:90%;
+  margin:auto;
+  max-width:1400px;
+  margin-bottom:80px; /* spacing for footer */
+}
+
+/* TYPE BOXES */
+.type-box {
+  background: linear-gradient(145deg, rgba(30,30,30,0.95), rgba(15,15,15,0.85));
+  border-radius:25px;
+  overflow:hidden;
+  border:2px solid #444;
+  transition:0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
+  cursor:pointer;
+  position:relative;
+  min-height:380px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.75);
+  backdrop-filter: blur(5px);
+}
+
+.type-box:hover {
+  border-color:#f9d342;
+  transform: scale(1.08) rotateX(3deg);
+  box-shadow:0 0 80px rgba(249,211,66,0.8), 0 10px 40px rgba(0,0,0,0.6);
+}
+
+/* IMAGE SLIDESHOW */
+.type-box img {
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  display:block;
+  border-bottom: 2px solid #444;
+  position:absolute;
+  top:0;
+  left:0;
+  opacity:1;
+  transition: opacity 1s ease-in-out, transform 0.8s ease-in-out;
+}
+
+.type-box img.fade-out {
+  opacity:0;
+  transform: scale(1.1);
+}
+
+.type-box h2 {
+  color:#f9d342;
+  font-size:28px;
+  text-align:center;
+  padding:20px 15px;
+  text-shadow: 2px 2px 12px black, 0 0 8px #f9d342;
+  position:relative;
+  z-index:2;
+  margin-top:200px; /* push below images */
+  letter-spacing:1px;
+}
+
+/* PLAN BUTTONS */
+.plans-hidden {
+  max-height:0;
+  opacity:0;
+  overflow:hidden;
+  padding:0 25px;
+  transition: all 0.5s ease;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+  z-index:1;
+}
+
+.type-box:hover .plans-hidden {
+  max-height:1400px;
+  opacity:1;
+  padding-bottom:30px;
+}
+
+.plans-hidden p {
+  display:block;
+  text-align:center;
+  font-weight:700;
+  cursor:pointer;
+  background: linear-gradient(145deg, #1a1a1a, #333);
+  color:#f9d342;
+  padding:18px 20px;
+  border-radius:18px;
+  border:1px solid #444;
+  margin:12px 0;
+  transition:0.4s ease, transform 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  font-size:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.5);
+  width:80%;
+  max-width:300px;
+  letter-spacing:0.5px;
+}
+
+.plans-hidden p:hover {
+  transform:translateY(-8px) scale(1.1);
+  background: linear-gradient(145deg, #f9d342, #ffc107);
+  color:#000;
+  box-shadow:0 12px 30px rgba(249,211,66,0.7);
+}
+
+/* MOBILE TAP-TO-EXPAND */
+@media(max-width:768px){
+  .type-box.show-plans .plans-hidden {
+    max-height: 1400px;
+    opacity: 1;
+    padding-bottom: 30px;
+  }
+}
+
+/* FOOTER */
+footer {
+  background: rgba(0,0,0,0.95);
+  color: #fff;
+  text-align: center;
+  padding: 18px 20px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.7);
+  backdrop-filter: blur(5px);
+  margin-top: 40px;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .plan-type-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media(max-width:768px){
+  nav ul {
+    display: none;
+  }
+  .hamburger {
+    display: flex;
+  }
+  body {
+    padding-top: 70px; /* smaller navbar height */
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">Fit and Lift</div>
+  <div class="hamburger" onclick="toggleSidebar()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <ul>
+    <li><a href="home.html">Home</a></li>
+    <li><a href="program.html">Programs</a></li>
+    <li><a href="trainers.html">Trainers</a></li>
+    <li><a href="contacts.html">Contact</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<!-- Sidebar for mobile -->
+<div id="sidebar" class="sidebar">
+  <a href="home.html">Home</a>
+  <a href="program.html">Programs</a>
+  <a href="trainers.html">Trainers</a>
+  <a href="contacts.html">Contact</a>
+  <a href="login.html">Login</a>
+</div>
+
+<h1>Fit & Lift – Subscription Plans</h1>
+
+<div class="plan-type-container">
+
+  <!-- MEMBER -->
+  <div class="type-box">
+    <img src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba" />
+    <img src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1" />
+    <h2>Member</h2>
+    <div class="plans-hidden">
+      <p>₱1,000 / month</p>
+<p>₱2,500 / 3 months</p>
+<p>₱4,500 / 6 months</p>
+<p>₱8,000 / 1 year</p>
+
+    </div>
+  </div>
+
+  <!-- PERSONAL TRAINING -->
+  <div class="type-box">
+    <img src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74" />
+    <img src="https://images.unsplash.com/photo-1594737625785-cd503d5ed3d7" />
+    <h2>Personal Training</h2>
+    <div class="plans-hidden">
+      <p>₱2,500 (5 sessions)</p>
+<p>₱2,750 (8 sessions)</p>
+<p>₱3,000 (10 sessions)</p>
+<p>₱3,500 (15 sessions)</p>
+<p>₱4,500 (Unlimited)</p>
+<p>₱8,500 (2 months / 40 sessions)</p>
+<p>₱11,500 (3 months / 60 sessions)</p>
+<p>₱500 / session (Walk-in)</p>
+
+    </div>
+  </div>
+
+  <!-- STUDENT -->
+  <div class="type-box">
+    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438" />
+    <img src="https://images.unsplash.com/photo-1594737625785-cd503d5ed3d7" />
+    <h2>Student</h2>
+    <div class="plans-hidden">
+      <p>₱800 / month</p>
+    </div>
+  </div>
+
+  <!-- WALK-IN -->
+  <div class="type-box">
+    <img src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1" />
+    <img src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba" />
+    <h2>Walk-in</h2>
+    <div class="plans-hidden">
+      <p>₱150 / day</p>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-content">
+    <p>&copy; 2025 Fit and Lift. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+// IMAGE SLIDESHOW ON HOVER
+document.querySelectorAll('.type-box').forEach(box => {
+  const imgs = box.querySelectorAll('img');
+  let index = 0;
+  let interval;
+
+  box.addEventListener('mouseenter', () => {
+    if(window.innerWidth > 768){ // only desktop
+      interval = setInterval(() => {
+        imgs[index].classList.add('fade-out');
+        index = (index + 1) % imgs.length;
+        imgs[index].classList.remove('fade-out');
+      }, 2500);
+    }
+  });
+
+  box.addEventListener('mouseleave', () => {
+    if(window.innerWidth > 768){ // only desktop
+      clearInterval(interval);
+      imgs.forEach((img, i) => i === 0 ? img.classList.remove('fade-out') : img.classList.add('fade-out'));
+      index = 0;
+    }
+  });
+
+  // MOBILE: tap to show plans
+  box.addEventListener('click', (e) => {
+    if(window.innerWidth <= 768){
+      e.stopPropagation();
+      box.classList.toggle('show-plans');
+    }
+  });
+});
+
+// Close any open plans if tapping outside (mobile)
+document.addEventListener('click', (e) => {
+  if(window.innerWidth <= 768){
+    document.querySelectorAll('.type-box.show-plans').forEach(box => {
+      if(!box.contains(e.target)){
+        box.classList.remove('show-plans');
+      }
+    });
+  }
+});
+
+// TOGGLE SIDEBAR
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.left = sidebar.style.left === '0px' ? '-250px' : '0px';
+}
+</script>
+
+</body>
+</html>

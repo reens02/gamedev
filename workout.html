@@ -1,0 +1,356 @@
+89% of storage used … If you run out of storage, you can't create, edit, and upload files. Get 30 GB for ₱49 ₱10/mo for 3 months.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workout Guide - Fit & Lift</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* GLOBAL STYLES */
+* { box-sizing: border-box; margin:0; padding:0; }
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(180deg, #0a0a0a 0%, #121212 100%);
+  color: #fff;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* NAVBAR */
+.navbar {
+  position: fixed; top: 0; left: 0; width: 100%;
+  background: rgba(0,0,0,0.85);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 15px 40px; 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+  transition: background 0.3s;
+}
+.navbar:hover { background: rgba(0,0,0,0.95); }
+.navbar .logo { font-size: 26px; font-weight: bold; color: #f9d342; text-shadow: 1px 1px 5px rgba(0,0,0,0.6); text-decoration: none; }
+.navbar ul { list-style: none; display: flex; gap: 25px; }
+.navbar ul li a { text-decoration: none; color: #fff; font-size: 16px; font-weight: 500; position: relative; transition: color 0.3s; cursor:pointer; }
+.navbar ul li a::after { content: ''; position: absolute; width: 0; height: 2px; background: #f9d342; left:0; bottom:-5px; transition:0.3s; }
+.navbar ul li a:hover::after { width: 100%; }
+.navbar ul li a:hover { color: #f9d342; }
+
+/* NOTIFICATION BADGE */
+#notifText { position: relative; color: #f9d342; font-weight: 600; cursor: pointer; }
+#notifText .badge {
+  position: absolute; top: -8px; right: -12px;
+  background: #ff3b3b; color: #fff;
+  font-size: 12px; font-weight: bold;
+  padding: 2px 6px; border-radius: 50%;
+}
+
+/* HAMBURGER */
+.hamburger { display: none; font-size: 28px; color: #f9d342; cursor: pointer; }
+
+/* CONTAINER */
+.container {
+  padding: 140px 40px 40px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* HEADER */
+h1 {
+  text-align: center;
+  color: #f9d342;
+  font-size: 36px;
+  margin-bottom: 50px;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+}
+
+/* MUSCLE CARDS */
+.muscle-group {
+  background: rgba(255,255,255,0.03);
+  padding: 25px 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  margin-bottom: 30px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-left: 5px solid #f9d342;
+}
+.muscle-group:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.7);
+  border-left-color: #ffc107;
+}
+.muscle-group h2 {
+  font-size: 26px;
+  color: #f9d342;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.muscle-group ul {
+  list-style: disc inside;
+  padding-left: 10px;
+  color: #ddd;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.muscle-group ul li {
+  padding: 5px 0;
+  transition: color 0.3s;
+}
+.muscle-group ul li:hover { color: #ffc107; cursor: default; }
+
+/* MODALS */
+.modal {
+  display: none;
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(5px);
+  justify-content:center; align-items:center;
+  z-index:2000;
+}
+.modal-content {
+  background: rgba(255,255,255,0.05);
+  padding: 30px; border-radius: 20px;
+  max-width: 400px; width: 90%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  text-align:center;
+}
+.close-btn { position:absolute; top:15px; right:20px; font-size:1.5em; color:#f9d342; cursor:pointer; }
+
+/* MOBILE SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0; left: -280px;
+  width: 280px; height: 100%;
+  background: rgba(20,20,20,0.98);
+  backdrop-filter: blur(10px);
+  box-shadow: 3px 0 20px rgba(0,0,0,0.8);
+  z-index: 1500;
+  display: flex; flex-direction: column;
+  padding-top: 20px;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  transition: 0.3s;
+}
+.sidebar.active { left: 0; }
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1);}
+.sidebar-profile { display:flex; align-items:center; gap:10px; color:#f9d342; font-weight:600; font-size:16px;}
+.sidebar-profile i { font-size:36px; }
+.sidebar ul { flex-direction: column; display: flex; gap: 20px; padding-left: 20px; margin-top: 20px;}
+.sidebar ul li a {
+  font-size: 18px; font-weight: 500; color: #fff; display: flex; align-items:center; gap: 12px;
+  padding: 10px 15px; border-radius: 12px; transition: all 0.3s ease;
+}
+.sidebar ul li a:hover { background: linear-gradient(135deg, #f9d342, #ffc107); color: #000; transform: translateX(5px);}
+#closeSidebar:hover { color: #ffc107; }
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .container { padding:120px 20px 20px 20px; }
+  .muscle-group h2 { font-size: 22px; }
+  .hamburger { display: block; }
+  .navbar ul { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="home.html" class="logo">Fit & Lift</a>
+  <i class="fas fa-bars hamburger" id="hamburgerBtn"></i>
+  <ul>
+    <li><a id="notifText">Notifications <span class="badge" id="notifCount">3</span></a></li>
+    <li><a href="member.html">Member Dashboard</a></li>
+    <li><a href="workout.html">Workouts</a></li>
+    <li><a href="contacts.html">Contact</a></li>
+    <li><a id="logoutBtn">Logout</a></li>
+  </ul>
+</nav>
+
+<!-- NOTIFICATION MODAL -->
+<div id="notifModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeNotifModal()">&times;</span>
+    <h2>Your Notifications</h2>
+    <p>No new notifications.</p>
+  </div>
+</div>
+
+<!-- MOBILE SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header"><div class="sidebar-profile"><i class="fas fa-user-circle"></i><span>Member</span></div><i class="fas fa-times" id="closeSidebar"></i></div>
+  <ul>
+    <li><a id="mobileNotifText"><i class="fas fa-bell"></i> Notifications <span class="badge" id="mobileNotifCount">3</span></a></li>
+    <li><a href="memberui.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+    <li><a href="memberprofile.html"><i class="fas fa-user"></i> Profile</a></li>
+    <li><a href="workouts.html"><i class="fas fa-dumbbell"></i> Workouts</a></li>
+    <li><a id="mobileLogoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+  </ul>
+</div>
+
+<div class="container">
+<h1>Workout Guide - Muscle Focus</h1>
+
+<!-- CHEST -->
+<div class="muscle-group">
+  <h2><i class="fas fa-dumbbell"></i> Chest</h2>
+  <ul>
+    <li>Bench Press</li>
+    <li>Incline Bench Press</li>
+    <li>Decline Bench Press</li>
+    <li>Push-Ups</li>
+    <li>Dumbbell Flyes</li>
+    <li>Cable Crossovers</li>
+  </ul>
+</div>
+
+<!-- BACK -->
+<div class="muscle-group">
+  <h2><i class="fas fa-backward"></i> Back</h2>
+  <ul>
+    <li>Pull-Ups</li>
+    <li>Chin-Ups</li>
+    <li>Bent-Over Rows</li>
+    <li>Lat Pulldowns</li>
+    <li>Deadlifts</li>
+    <li>Seated Cable Rows</li>
+    <li>T-Bar Rows</li>
+  </ul>
+</div>
+
+<!-- BICEPS -->
+<div class="muscle-group">
+  <h2><i class="fas fa-hand-rock"></i> Biceps</h2>
+  <ul>
+    <li>Dumbbell Curls</li>
+    <li>Hammer Curls</li>
+    <li>Concentration Curls</li>
+    <li>Barbell Curls</li>
+    <li>Preacher Curls</li>
+    <li>Cable Curls</li>
+  </ul>
+</div>
+
+<!-- TRICEPS -->
+<div class="muscle-group">
+  <h2><i class="fas fa-hand-paper"></i> Triceps</h2>
+  <ul>
+    <li>Tricep Dips</li>
+    <li>Overhead Tricep Extension</li>
+    <li>Close-Grip Bench Press</li>
+    <li>Tricep Pushdowns</li>
+    <li>Skull Crushers</li>
+    <li>Cable Kickbacks</li>
+  </ul>
+</div>
+
+<!-- LEGS -->
+<div class="muscle-group">
+  <h2><i class="fas fa-shoe-prints"></i> Legs</h2>
+  <ul>
+    <li>Squats</li>
+    <li>Lunges</li>
+    <li>Leg Press</li>
+    <li>Deadlifts</li>
+    <li>Hamstring Curls</li>
+    <li>Calf Raises</li>
+    <li>Glute Bridges</li>
+  </ul>
+</div>
+
+<!-- SHOULDERS -->
+<div class="muscle-group">
+  <h2><i class="fas fa-dumbbell"></i> Shoulders</h2>
+  <ul>
+    <li>Overhead Press</li>
+    <li>Lateral Raises</li>
+    <li>Front Raises</li>
+    <li>Rear Delt Flyes</li>
+    <li>Arnold Press</li>
+    <li>Upright Rows</li>
+  </ul>
+</div>
+
+<!-- CORE -->
+<div class="muscle-group">
+  <h2><i class="fas fa-bolt"></i> Core</h2>
+  <ul>
+    <li>Planks</li>
+    <li>Crunches</li>
+    <li>Russian Twists</li>
+    <li>Leg Raises</li>
+    <li>Mountain Climbers</li>
+    <li>Hanging Knee Raises</li>
+  </ul>
+</div>
+
+</div>
+
+<!-- LOGOUT MODAL -->
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeLogoutModal()">&times;</span>
+    <h2>Are you sure you want to log out?</h2>
+    <button onclick="confirmLogout()">Yes</button>
+    <button onclick="closeLogoutModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- SAVE PASSWORD MODAL -->
+<div id="savePasswordModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeSavePasswordModal()">&times;</span>
+    <h2>Do you want to save your password?</h2>
+    <button onclick="logout(true)">Yes, save password</button>
+    <button onclick="logout(false)">No, just log out</button>
+  </div>
+</div>
+
+<script>
+const logoutBtn = document.getElementById('logoutBtn');
+const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+const logoutModal = document.getElementById('logoutModal');
+const savePasswordModal = document.getElementById('savePasswordModal');
+const sidebar = document.getElementById('sidebar');
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const closeSidebarBtn = document.getElementById('closeSidebar');
+
+// Notifications
+const notifText = document.getElementById("notifText");
+const notifModal = document.getElementById("notifModal");
+const mobileNotifText = document.getElementById("mobileNotifText");
+
+notifText.addEventListener("click", () => { notifModal.style.display = "flex"; });
+mobileNotifText.addEventListener("click", () => { sidebar.classList.remove('active'); notifModal.style.display = "flex"; });
+function closeNotifModal(){ notifModal.style.display = "none"; }
+
+// Logout
+logoutBtn.addEventListener('click', () => { logoutModal.style.display = 'flex'; });
+mobileLogoutBtn.addEventListener('click', () => { sidebar.classList.remove('active'); logoutModal.style.display='flex'; });
+hamburgerBtn.addEventListener('click', () => { sidebar.classList.add('active'); });
+closeSidebarBtn.addEventListener('click', () => { sidebar.classList.remove('active'); });
+
+function closeLogoutModal(){ logoutModal.style.display = 'none'; }
+function confirmLogout(){ logoutModal.style.display='none'; savePasswordModal.style.display='flex'; }
+function closeSavePasswordModal(){ savePasswordModal.style.display='none'; }
+function logout(savePassword){
+  savePasswordModal.style.display='none';
+  if(savePassword) localStorage.setItem("savePassword","true");
+  else localStorage.removeItem("savePassword");
+  window.location.href="login.html";
+}
+
+window.onclick = function(e){
+  if(e.target==logoutModal) closeLogoutModal();
+  if(e.target==savePasswordModal) closeSavePasswordModal();
+  if(e.target==notifModal) closeNotifModal();
+}
+</script>
+
+</body>
+</html>

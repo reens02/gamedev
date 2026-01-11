@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Announcement</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #101010;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h2 {
+    margin-bottom: 15px;
+    color: #4caf50;
+  }
+
+  .card {
+    background: #1a1a1a;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  }
+
+  .form-label {
+    display:block;
+    margin-bottom:8px;
+    font-weight:500;
+    color: #fff;
+  }
+
+  input, select, textarea, button {
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:5px;
+    border:none;
+    outline:none;
+    font-size:1rem;
+    background:#222;
+    color:#fff;
+    transition: all 0.3s ease;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    background:#333;
+    box-shadow: 0 0 5px #4caf50;
+  }
+
+  textarea { resize:none; }
+
+  .btn {
+    background:#4caf50;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    background:#45a049;
+    transform: translateY(-1px);
+  }
+
+  .btn.ghost {
+    background:#333;
+    color:#4caf50;
+  }
+
+  .btn.small {
+    padding:5px 12px;
+    font-size:0.85rem;
+  }
+
+  .custom-search-container { display:none; margin-bottom:15px; }
+  .custom-search-container.active { display:block; }
+
+  .member-search-results, .selected-members { margin-top:5px; }
+  .member-result-item {
+    padding:8px; 
+    background:#2a2a2a; 
+    margin-bottom:4px; 
+    cursor:pointer; 
+    border-radius:5px; 
+    transition: all 0.2s ease;
+  }
+  .member-result-item:hover { background:#4caf50; color:#101010; }
+
+  .selected-member-tag {
+    display:inline-block;
+    background:#4caf50;
+    color:#101010;
+    padding:4px 10px;
+    margin:3px;
+    border-radius:6px;
+    font-weight:500;
+  }
+  .selected-member-tag button {
+    background:none;
+    border:none;
+    color:#101010;
+    margin-left:6px;
+    cursor:pointer;
+    font-weight:bold;
+  }
+
+  .notification-history .notification-item {
+    background:#222;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+  }
+  .notification-history .notification-item:hover {
+    transform: translateY(-1px);
+    background:#2a2a2a;
+  }
+
+  .notification-title { font-weight:bold; margin-bottom:5px; color:#4caf50; }
+  .notification-meta { font-size:0.85rem; color:#aaa; margin-bottom:8px; }
+  .notification-actions { text-align:right; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Send Announcement</h2>
+  <label class="form-label">Recipient</label>
+  <select id="announcementRecipient">
+    <option value="all">All Members</option>
+    <option value="students">Students Only</option>
+    <option value="members">Members Only</option>
+    <option value="walkin">Walk-in Only</option>
+    <option value="custom">Custom Selection</option>
+  </select>
+
+  <div class="custom-search-container" id="customSearchContainer">
+    <label class="form-label">Search Members</label>
+    <input type="text" id="memberSearch" placeholder="Type name or email...">
+    <div class="member-search-results" id="memberSearchResults"></div>
+    <div class="selected-members" id="selectedMembers"></div>
+  </div>
+
+  <label class="form-label">Title</label>
+  <input type="text" id="announcementTitle" placeholder="Enter title">
+
+  <label class="form-label">Message</label>
+  <textarea id="announcementMessage" rows="5" placeholder="Enter announcement message"></textarea>
+
+  <div style="display:flex; gap:15px;">
+    <button class="btn ghost" id="previewAnnouncement">Preview</button>
+    <button class="btn" id="sendAnnouncement">Send Announcement</button>
+  </div>
+</div>
+
+<div class="card notification-history">
+  <h2>Announcement History</h2>
+  <div id="announcementList"></div>
+</div>
+
+<script>
+// Sample members
+const sampleMembers = [
+  {id:1,name:"Juan Dela Cruz",type:"Student",email:"juan@email.com"},
+  {id:2,name:"Maria Santos",type:"Member",email:"maria@email.com"},
+  {id:3,name:"Pedro Reyes",type:"Walk-in",email:"pedro@email.com"},
+  {id:4,name:"Ana Lopez",type:"Member",email:"ana@email.com"},
+  {id:5,name:"Miguel Torres",type:"Student",email:"miguel@email.com"},
+  {id:6,name:"Sofia Garcia",type:"Member",email:"sofia@email.com"}
+];
+
+let selectedMembers = [];
+const announcementList = document.getElementById('announcementList');
+
+// Toggle custom search
+document.getElementById('announcementRecipient').addEventListener('change', function(){
+  const container = document.getElementById('customSearchContainer');
+  if(this.value==='custom'){ container.classList.add('active'); }
+  else { container.classList.remove('active'); selectedMembers=[]; updateSelectedMembersDisplay(); }
+});
+
+// Member search
+document.getElementById('memberSearch').addEventListener('input', function(){
+  const term = this.value.toLowerCase();
+  const resultsContainer = document.getElementById('memberSearchResults');
+  if(term.length<2){ resultsContainer.innerHTML=''; return; }
+  const filtered = sampleMembers.filter(m=>m.name.toLowerCase().includes(term)||m.email.toLowerCase().includes(term));
+  displaySearchResults(filtered);
+});
+
+function displaySearchResults(members){
+  const resultsContainer = document.getElementById('memberSearchResults');
+  if(members.length===0){ resultsContainer.innerHTML='<div style="text-align:center;color:#aaa;">No members found</div>'; return; }
+  resultsContainer.innerHTML = members.map(m=>`
+    <div class="member-result-item" data-id="${m.id}">${m.name} • ${m.type} • ${m.email}</div>
+  `).join('');
+  document.querySelectorAll('.member-result-item').forEach(item=>{
+    item.addEventListener('click',function(){
+      const memberId=parseInt(this.getAttribute('data-id'));
+      const member=sampleMembers.find(m=>m.id===memberId);
+      if(member && !selectedMembers.some(m=>m.id===memberId)){
+        selectedMembers.push(member);
+        updateSelectedMembersDisplay();
+      }
+    });
+  });
+}
+
+function updateSelectedMembersDisplay(){
+  const container=document.getElementById('selectedMembers');
+  container.innerHTML=selectedMembers.map(m=>`
+    <div class="selected-member-tag">${m.name}<button data-id="${m.id}">&times;</button></div>
+  `).join('');
+  document.querySelectorAll('.selected-member-tag button').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      const id=parseInt(this.getAttribute('data-id'));
+      selectedMembers = selectedMembers.filter(m=>m.id!==id);
+      updateSelectedMembersDisplay();
+    });
+  });
+}
+
+// Send announcement
+document.getElementById('sendAnnouncement').addEventListener('click',function(){
+  const title=document.getElementById('announcementTitle').value;
+  const message=document.getElementById('announcementMessage').value;
+  const recipient=document.getElementById('announcementRecipient').value;
+  let recipientsList=[];
+  if(recipient==='all') recipientsList=sampleMembers;
+  else if(recipient==='students') recipientsList=sampleMembers.filter(m=>m.type==='Student');
+  else if(recipient==='members') recipientsList=sampleMembers.filter(m=>m.type==='Member');
+  else if(recipient==='walkin') recipientsList=sampleMembers.filter(m=>m.type==='Walk-in');
+  else if(recipient==='custom') recipientsList=selectedMembers;
+
+  if(!title||!message||recipientsList.length===0){
+    alert("Please fill all fields and select recipients.");
+    return;
+  }
+
+  const newAnnouncement={
+    title,message,recipients:recipientsList.map(r=>r.name).join(", "),date:new Date().toLocaleDateString()
+  };
+  addAnnouncementToHistory(newAnnouncement);
+  alert("Announcement sent!");
+  document.getElementById('announcementTitle').value='';
+  document.getElementById('announcementMessage').value='';
+  selectedMembers=[];
+  updateSelectedMembersDisplay();
+});
+
+// Preview
+document.getElementById('previewAnnouncement').addEventListener('click',function(){
+  const title=document.getElementById('announcementTitle').value;
+  const message=document.getElementById('announcementMessage').value;
+  if(!title||!message){ alert("Enter title and message for preview."); return; }
+  alert("Preview:\n\nTitle: "+title+"\n\nMessage: "+message);
+});
+
+function addAnnouncementToHistory(announcement){
+  const item=document.createElement('div');
+  item.className='notification-item';
+  item.innerHTML=`
+    <div class="notification-title">${announcement.title}</div>
+    <div class="notification-meta">Sent: ${announcement.date} | Recipients: ${announcement.recipients}</div>
+    <div class="notification-content">${announcement.message}</div>
+    <div class="notification-actions"><button class="btn small delete">Delete</button></div>
+  `;
+  item.querySelector('.delete').addEventListener('click',()=>item.remove());
+  announcementList.prepend(item);
+}
+
+// Preload some announcements
+const sampleAnnouncements=[
+  {title:"Gym Maintenance",message:"Closed Sep 20 8AM-12PM",recipients:"All Members",date:"2025-09-15"},
+  {title:"New HIIT Class",message:"Sign up now!",recipients:"Members Only",date:"2025-09-10"}
+];
+sampleAnnouncements.forEach(addAnnouncementToHistory);
+</script>
+
+</body>
+</html>
+
+

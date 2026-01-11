@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Manage Members - Fit and Lift</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+  :root{
+    --bg:#0f0f12;
+    --panel:#1c1c24;
+    --muted:#bfc3c8;
+    --accent:#f9d342;
+    --accent-2:#ffc107;
+    --success:#00e676;
+    --danger:#ff3d00;
+    --card:#2a2a2a;
+    --glass: rgba(255,255,255,0.03);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter, Arial, sans-serif;
+    background: linear-gradient(180deg,#070707 0%,#0f0f12 100%);
+    color:#fff;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    min-height:100vh;
+  }
+
+  /* NAV */
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:18px 28px;
+    background:var(--panel);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.6);
+  }
+  .logo{font-weight:700; font-size:20px; color:var(--accent)}
+  nav ul{display:flex; gap:18px; list-style:none; margin:0; padding:0}
+  nav a{color:#fff; text-decoration:none; font-weight:600; opacity:0.95}
+  nav a:hover{color:var(--accent)}
+
+  .wrap{
+    max-width:1200px;
+    margin:30px auto;
+    padding:24px;
+  }
+
+  /* Header / Controls */
+  .header {
+    display:flex;
+    gap:16px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+  .title-block h1{margin:0; color:var(--accent); letter-spacing:0.6px}
+  .controls{display:flex; gap:12px; align-items:center}
+
+  .btn{
+    border:none;
+    padding:10px 16px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-accent{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#111;
+  }
+  .btn-muted{ background:#3a3a45; color:#fff }
+
+  /* Search */
+  .search-row{ display:flex; gap:10px; align-items:center; width:480px }
+  .search-row input{
+    flex:1;
+    padding:10px 12px;
+    border-radius:10px;
+    border:none;
+    background:#2a2a2a;
+    color:#fff;
+  }
+
+  /* layout list + sidebar optionally */
+  .content {
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
+  }
+
+  .list-panel{
+    flex:1;
+    background:var(--glass);
+    padding:18px;
+    border-radius:16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    min-height:300px;
+  }
+
+  .panel-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+  }
+
+  /* member cards */
+  .member-list{ display:flex; flex-direction:column; gap:12px }
+  .member-card{
+    display:grid;
+    grid-template-columns: 1fr auto auto;
+    gap:12px;
+    align-items:center;
+    padding:12px;
+    background:var(--card);
+    border-radius:12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  }
+  .member-info .name{ font-weight:700; font-size:16px }
+  .member-info .meta{ color:var(--muted); font-size:13px }
+
+  .badge{
+    padding:6px 12px;
+    border-radius:999px;
+    text-transform:uppercase;
+    font-weight:700;
+    font-size:12px;
+    display:inline-block;
+    min-width:80px;
+    text-align:center;
+  }
+  .badge.active{ background:var(--success); color:#000 }
+  .badge.expired{ background:var(--danger); color:#fff }
+
+  .card-actions{ display:flex; gap:8px }
+  .action-btn{
+    border-radius:8px;
+    padding:8px 10px;
+    border:none;
+    cursor:pointer;
+    color:#fff;
+    font-weight:700;
+  }
+  .view{ background:#2196f3 }
+  .edit{ background:#4caf50 }
+  .del{ background:#f44336 }
+
+  /* search results */
+  #searchResults { margin-top:12px }
+
+  /* empty message */
+  .empty{ color:#cfcfcf; padding:18px; text-align:center; background:#18181b; border-radius:10px }
+
+  /* POPUP / MODAL shared */
+  .popup {
+    position:fixed; inset:0; display:none;
+    justify-content:center; align-items:center;
+    background: rgba(0,0,0,0.6);
+    z-index:9999;
+    padding:20px;
+  }
+  .popup.show { display:flex; }
+
+  .modal {
+    width:100%;
+    max-width:760px;
+    background:linear-gradient(180deg,var(--panel),#141417);
+    border-radius:18px;
+    padding:22px;
+    box-shadow: 0 18px 60px rgba(0,0,0,0.7);
+    position:relative;
+    color:#fff;
+  }
+
+  .modal h2{ margin:0 0 12px 0; color:var(--accent) }
+
+  .close-x{
+    position:absolute; right:16px; top:12px; cursor:pointer; font-size:20px; opacity:0.9;
+  }
+
+  /* form grid */
+  .form-grid{
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:12px;
+    margin-top:12px;
+  }
+  .form-grid .full { grid-column: 1 / -1 }
+  .form-grid input, .form-grid select {
+    padding:10px 12px; border-radius:10px; border:none;
+    background:#2b2b33; color:#fff; font-size:14px;
+  }
+  .form-row{ display:flex; gap:8px; align-items:center }
+
+  .modal .actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:14px }
+
+  /* member details popup smaller */
+  .member-details .detail-row{ display:flex; justify-content:space-between; gap:10px; padding:10px; background:#23232b; border-radius:8px; margin-bottom:8px }
+  .member-details .label{ color:var(--muted); font-weight:700 }
+
+  /* responsive rules */
+  @media (max-width:1000px){
+    .form-grid{ grid-template-columns: repeat(2,1fr) }
+    .search-row{ width:100% }
+  }
+  @media (max-width:700px){
+    nav{ flex-direction:column; gap:12px; align-items:flex-start }
+    .content{ flex-direction:column }
+    .form-grid{ grid-template-columns:1fr }
+    .member-card{ grid-template-columns:1fr auto; }
+  }
+
+    /*pop up edit member*/
+  .popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
+
+.popup-content {
+  background: #1f1f1f;
+  padding: 25px;
+  width: 420px;
+  border-radius: 12px;
+  color: #fff;
+  position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.close-x {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.popup-content h2 {
+  text-align: center;
+  margin: 10px 0 20px;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input-group.full {
+  grid-column: span 2;
+}
+
+.input-group label {
+  font-size: 14px;
+}
+
+.input-group input,
+.input-group select {
+  background: #2c2c2c;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 22px;
+}
+
+.save-btn {
+  background: #00c853;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+.close-btn {
+  background: #ff3d00;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+</style>
+</head>
+<body>
+  
+  <nav>
+    <div class="logo">Fit and Lift</div>
+    <ul>
+      <li><a href="staff.html">Dashboard</a></li>
+      <li><a href="trainers.html">Trainers</a></li>
+      <li><a href="login.html">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="wrap">
+    <div class="header">
+      <div class="title-block">
+        <h1>Manage Members</h1>
+        <div style="color:var(--muted); font-size:14px; margin-top:6px">View, add, edit and remove members</div>
+      </div>
+
+      <div class="controls">
+        <div class="search-row">
+          <input id="searchInput" placeholder="Search by first or last name..." />
+          <button class="btn btn-muted" id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+        </div>
+
+        
+        <button id="openAddMemberBtn" class="btn btn-accent"><i class="fa-solid fa-plus"></i> Add Member</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="list-panel">
+          <div style="font-weight:700; margin-bottom:8px">Searched Members</div>
+    <div id="searchResults" class="member-list" style="margin-bottom:45px;"></div>
+    
+    <!-- Divider -->
+    <hr style="border:none; height:1px; background:rgba(255,255,255,0.1); margin-bottom:16px;" />
+
+        <div class="panel-header">
+          <div style="font-weight:700">Latest Members</div>
+          <div style="color:var(--muted); font-size:13px">Showing latest 5</div>
+        </div>
+
+        <div id="memberList" class="member-list">
+          <!-- member cards inserted here -->
+        </div>
+
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD MEMBER POPUP -->
+  <div id="addMemberPopup" class="popup" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="addMemberTitle">
+      <span class="close-x" onclick="closeAddMemberPopup()">&times;</span>
+      <h2 id="addMemberTitle">Add Member</h2>
+
+      <div class="form-grid">
+        <select id="role" onchange="handleAddRoleChange()">
+          <option value="">Select Role</option>
+          <option>Member</option>
+          <option>Trainer</option>
+          <option>Staff</option>
+        </select>
+
+        <input id="firstName" placeholder="First Name" />
+        <input id="lastName" placeholder="Last Name" />
+
+        <input id="email" placeholder="Email" type="email" />
+        <input id="birthday" placeholder="Birthday" type="date" />
+        <select id="gender">
+          <option value="">Select Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+
+        <input id="contact" placeholder="Contact Number" />
+        <input id="username" placeholder="Username" />
+        <input id="password" placeholder="Password" type="password" />
+
+        <!-- membership fields (hidden when role !== Member) -->
+        <div id="addMembershipFields" class="full" style="display:none">
+          <div style="display:grid; gap:8px">
+            <select id="membershipType" onchange="updatePlans()">
+              <option value="">Select Membership Type</option>
+              <option>Member</option>
+              <option>Walk-in</option>
+              <option>Student</option>
+              <option>Personal Training</option>
+            </select>
+            <select id="plan">
+              <option value="">Select Plan</option>
+            </select>
+            <div style="display:flex; gap:8px">
+              <input id="startDate" type="date" />
+              <input id="endDate" type="date" />
+            </div>
+          </div>
+        </div>
+
+        <select id="status" style="width:100%">
+          <option>Active</option>
+          <option>Expired</option>
+        </select>
+      </div>
+
+      <div class="actions" style="margin-top:14px">
+        <button class="btn btn-muted" onclick="closeAddMemberPopup()">Cancel</button>
+        <button class="btn btn-accent" onclick="addMember()"><i class="fa-solid fa-plus"></i> Add</button>
+      </div>
+    </div>
+  </div>
+
+<!-- EDIT MEMBER POPUP -->
+  <div id="editPopup" class="popup" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editMemberTitle">
+      <span class="close-x" onclick="closeEditPopup()">&times;</span>
+      <h2 id="editMemberTitle">Edit Member</h2>
+
+      
+      <input type="hidden" id="editUsername" />
+
+    <div class="input-grid">
+
+      <div class="input-group">
+        <label>First Name</label>
+        <input id="editFirstName" type="text" placeholder="Enter first name">
+      </div>
+
+      <div class="input-group">
+        <label>Last Name</label>
+        <input id="editLastName" type="text" placeholder="Enter last name">
+      </div>
+
+      <div class="input-group full">
+        <label>Email</label>
+        <input id="editEmail" type="email" placeholder="Enter email">
+      </div>
+
+      <div class="input-group">
+        <label>Birthday</label>
+        <input id="editBirthday" type="date">
+      </div>
+
+      <div class="input-group">
+        <label>Gender</label>
+        <select id="editGender">
+          <option value="">Select Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Contact</label>
+        <input id="editContact" type="text" placeholder="Contact Number">
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input id="editPassword" type="password" placeholder="Enter Password">
+      </div>
+
+      <div class="input-group">
+        <label>Role</label>
+        <input id="editRole" type="text" readonly>
+      </div>
+
+      <div class="input-group">
+        <label>Status</label>
+        <select id="editStatus">
+          <option>Active</option>
+          <option>Expired</option>
+        </select>
+      </div>
+
+  <!-- Membership fields -->
+      <div id="membershipFields" class="input-group full" style="display:none;">
+        <label>Membership Details</label>
+
+        <div class="input-grid">
+          <div class="input-group">
+            <label>Membership Type</label>
+            <select id="editMembershipType" onchange="updateEditPlans()">
+              <option value="">Select Membership Type</option>
+              <option>Member</option>
+              <option>Walk-in</option>
+              <option>Student</option>
+              <option>Personal Training</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Plan</label>
+            <select id="editPlan"></select>
+          </div>
+
+          <div class="input-group">
+            <label>Start Date</label>
+            <input id="editStartDate" type="date">
+          </div>
+
+          <div class="input-group">
+            <label>End Date</label>
+            <input id="editEndDate" type="date">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="popup-buttons">
+      <button class="close-btn" onclick="closeEditPopup()">Cancel</button>
+      <button class="save-btn" onclick="updateMember()">Save Changes</button>
+    </div>
+
+  </div>
+</div>
+
+
+  <!-- VIEW MEMBER POPUP -->
+  <div id="viewPopup" class="popup" aria-hidden="true">
+    <div class="modal">
+      <span class="close-x" onclick="closeViewPopup()">&times;</span>
+      <h2>Member Details</h2>
+      <div class="member-details" style="margin-top:12px">
+        <div class="detail-row"><div class="label">Username</div><div id="viewUsername"></div></div>
+        <div class="detail-row"><div class="label">Name</div><div id="viewFullName"></div></div>
+        <div class="detail-row"><div class="label">Email</div><div id="viewEmail"></div></div>
+        <div class="detail-row"><div class="label">Role</div><div id="viewRole"></div></div>
+        <div class="detail-row"><div class="label">Status</div><div id="viewStatus"></div></div>
+        <div class="detail-row"><div class="label">Birthday</div><div id="viewBirthday"></div></div>
+        <div class="detail-row"><div class="label">Gender</div><div id="viewGender"></div></div>
+        <div class="detail-row"><div class="label">Membership Type</div><div id="viewMembershipType"></div></div>
+        <div class="detail-row"><div class="label">Plan</div><div id="viewPlan"></div></div>
+        <div class="detail-row"><div class="label">Start Date</div><div id="viewStartDate"></div></div>
+        <div class="detail-row"><div class="label">Expiry</div><div id="viewExpiryDate"></div></div>
+      </div>
+      <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end">
+        <button class="btn btn-muted" onclick="closeViewPopup()">Close</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+  
+  // === CONFIG ===
+  const API_URL = "http://127.0.0.1:5000";
+
+  // helper: populate plan options based on membership type
+  function getPlans(type) {
+    switch(type) {
+      case "Member": return ["₱1,000 / month","₱2,500 / 3 months","₱4,500 / 6 months","₱8,000 / 1 year"];
+      case "Walk-in": return ["₱150 / day"];
+      case "Student": return ["₱800 / month"];
+      case "Personal Training": return ["₱2,500 (5 sessions)","₱2,750 (8 sessions)","₱3,000 (10 sessions)","₱3,500 (15 sessions)","₱4,500 (Unlimited)","₱8,500 (2 months / 40 sessions)","₱11,500 (3 months / 60 sessions)","₱500 / session (Walk-in)"];
+      default: return [];
+    }
+  }
+
+  function updatePlans(){
+    const type = document.getElementById('membershipType').value;
+    const planSelect = document.getElementById('plan');
+    planSelect.innerHTML = '<option value="">Select Plan</option>';
+    getPlans(type).forEach(p => {
+      const opt = document.createElement('option'); opt.value = p; opt.textContent = p;
+      planSelect.appendChild(opt);
+    });
+  }
+
+  function updateEditPlans(){
+    const type = document.getElementById('editMembershipType').value;
+    const planSelect = document.getElementById('editPlan');
+    planSelect.innerHTML = '<option value="">Select Plan</option>';
+    getPlans(type).forEach(p => {
+      const opt = document.createElement('option'); opt.value = p; opt.textContent = p;
+      planSelect.appendChild(opt);
+    });
+  }
+
+  // show/hide membership fields on add modal
+  function handleAddRoleChange(){
+    const role = document.getElementById('role').value;
+    const membershipDiv = document.getElementById('addMembershipFields');
+    if(role === 'Member'){
+      membershipDiv.style.display = 'block';
+    } else {
+      membershipDiv.style.display = 'none';
+      document.getElementById('membershipType').value = '';
+      document.getElementById('plan').innerHTML = '<option value="">Select Plan</option>';
+      document.getElementById('startDate').value = '';
+      document.getElementById('endDate').value = '';
+    }
+  }
+
+  // show/hide membership fields on edit modal based on editRole value
+  function toggleMembershipFields(){
+    const role = document.getElementById('editRole').value;
+    const membershipDiv = document.getElementById('membershipFields');
+    if(role === 'Member'){
+      membershipDiv.style.display = 'block';
+    } else {
+      membershipDiv.style.display = 'none';
+      document.getElementById('editMembershipType').value = '';
+      document.getElementById('editPlan').innerHTML = '<option value="">Select Plan</option>';
+      document.getElementById('editStartDate').value = '';
+      document.getElementById('editEndDate').value = '';
+    }
+  }
+
+  // open/close modals
+  function openAddMemberPopup(){ document.getElementById('addMemberPopup').classList.add('show'); document.getElementById('addMemberPopup').setAttribute('aria-hidden','false'); }
+  function closeAddMemberPopup(){ document.getElementById('addMemberPopup').classList.remove('show'); document.getElementById('addMemberPopup').setAttribute('aria-hidden','true'); }
+
+  function openEditPopup(){ document.getElementById('editPopup').classList.add('show'); document.getElementById('editPopup').setAttribute('aria-hidden','false'); }
+  function closeEditPopup(){ document.getElementById('editPopup').classList.remove('show'); document.getElementById('editPopup').setAttribute('aria-hidden','true'); }
+
+  function openViewPopup(){ document.getElementById('viewPopup').classList.add('show'); document.getElementById('viewPopup').setAttribute('aria-hidden','false'); }
+  function closeViewPopup(){ document.getElementById('viewPopup').classList.remove('show'); document.getElementById('viewPopup').setAttribute('aria-hidden','true'); }
+
+  // === ADD MEMBER ===
+  async function addMember() {
+  const role = document.getElementById('role').value;
+  const data = {
+    firstName: document.getElementById('firstName').value.trim(),
+    lastName: document.getElementById('lastName').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    birthday: document.getElementById('birthday').value,
+    gender: document.getElementById('gender').value,
+    contact: document.getElementById('contact').value.trim(),
+    username: document.getElementById('username').value.trim(),
+    password: document.getElementById('password').value,
+    role: role,
+    status: document.getElementById('status').value
+  };
+
+  if(role === 'Member') {
+    data.membershipType = document.getElementById('membershipType').value;
+    data.plan = document.getElementById('plan').value;
+    data.startDate = document.getElementById('startDate').value;
+    data.endDate = document.getElementById('endDate').value;
+
+    if(!data.membershipType || !data.plan || !data.startDate || !data.endDate){
+      alert("Fill all membership fields!");
+      return;
+    }
+  }
+
+  if(!data.firstName || !data.lastName || !data.username || !data.password){
+    alert("Fill all required fields!");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/addMember`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if(result.success){
+      alert("Member added successfully!");
+      document.querySelectorAll('#addMemberPopup input, #addMemberPopup select').forEach(i=>i.value='');
+      closeAddMemberPopup();
+      loadMembers(); // reload list
+    } else {
+      alert("Error: " + (result.message || "Unknown error"));
+    }
+  } catch(err){
+    console.error(err);
+    alert("Failed to connect to server.");
+  }
+}
+
+
+  // === LOAD MEMBERS (latest 5) ===
+  async function loadMembers(){
+    try{
+      let members = await fetch(`${API_URL}/members`).then(r => r.json());
+      if(!Array.isArray(members)) members = [];
+
+      // show latest 5 (end of array assumed latest)
+      const latest = members.slice(-5).reverse();
+
+      const list = document.getElementById('memberList');
+      list.innerHTML = '';
+      if(latest.length === 0){
+        list.innerHTML = '<div class="empty">No members yet.</div>';
+        return;
+      }
+
+      latest.forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'member-card';
+        const membershipLabel = m.plan || m.membershipType || '-';
+        const statusClass = (m.status || '').toLowerCase() === 'expired' ? 'expired' : 'active';
+        card.innerHTML = `
+          <div class="member-info">
+            <div class="name">${escapeHtml(m.firstName || '')} ${escapeHtml(m.lastName || '')}</div>
+            <div class="meta">${escapeHtml(membershipLabel)}</div>
+          </div>
+          <div>
+            <span class="badge ${statusClass}">${escapeHtml(m.status || 'Active')}</span>
+          </div>
+          <div class="card-actions">
+            <button class="action-btn view" title="View" onclick="viewMember('${encodeURIComponent(m.username)}')"><i class="fa-solid fa-eye"></i></button>
+            <button class="action-btn edit" title="Edit" onclick="editMember('${encodeURIComponent(m.username)}')"><i class="fa-solid fa-pen"></i></button>
+            <button class="action-btn del" title="Delete" onclick="deleteMember('${encodeURIComponent(m.username)}')"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+
+    } catch(err){
+      console.error(err);
+      document.getElementById('memberList').innerHTML = '<div class="empty">Failed to load members.</div>';
+    }
+  }
+
+  // === VIEW MEMBER ===
+  async function viewMember(encodedUsername){
+    const username = decodeURIComponent(encodedUsername);
+    try{
+      const member = await fetch(`${API_URL}/member/${username}`).then(r => r.json());
+      if(!member || !member.username){ alert("Member not found."); return; }
+
+      document.getElementById('viewUsername').textContent = member.username || '-';
+      document.getElementById('viewFullName').textContent = `${member.firstName || ''} ${member.lastName || ''}`.trim();
+      document.getElementById('viewEmail').textContent = member.email || '-';
+      document.getElementById('viewRole').textContent = member.role || '-';
+      document.getElementById('viewStatus').textContent = member.status || '-';
+      document.getElementById('viewBirthday').textContent = member.birthday || '-';
+      document.getElementById('viewGender').textContent = member.gender || '-';
+      document.getElementById('viewMembershipType').textContent = member.membershipType || '-';
+      document.getElementById('viewPlan').textContent = member.plan || '-';
+      document.getElementById('viewStartDate').textContent = member.startDate || '-';
+      document.getElementById('viewExpiryDate').textContent = member.endDate || member.expiryDate || '-';
+
+      openViewPopup();
+    } catch(err){
+      console.error(err);
+      alert("Failed to load member.");
+    }
+  }
+
+  // === EDIT MEMBER ===
+  async function editMember(encodedUsername) {
+  const username = decodeURIComponent(encodedUsername);
+  try {
+    const member = await fetch(`${API_URL}/member/${username}`).then(r => r.json());
+    if (!member || !member.username) { alert("Member not found."); return; }
+
+    currentEditMemberId = member.id || member.username; // store ID or username
+
+    // fill edit form
+    document.getElementById('editFirstName').value = member.firstName || '';
+    document.getElementById('editLastName').value = member.lastName || '';
+    document.getElementById('editEmail').value = member.email || '';
+    document.getElementById('editBirthday').value = member.birthday || '';
+    document.getElementById('editGender').value = member.gender || '';
+    document.getElementById('editContact').value = member.contact || '';
+    document.getElementById('editPassword').value = member.password || '';
+    document.getElementById('editRole').value = member.role || '';
+    document.getElementById('editStatus').value = member.status || 'Active';
+    document.getElementById('editUsername').value = member.username || '';
+
+    // show membership fields
+    toggleMembershipFields();
+
+    // fill membership info if Member
+    if (member.role === 'Member') {
+      document.getElementById('editMembershipType').value = member.membershipType || '';
+      updateEditPlans(); // populate plan options
+      document.getElementById('editPlan').value = member.plan || '';
+      document.getElementById('editStartDate').value = member.startDate || '';
+      document.getElementById('editEndDate').value = member.endDate || '';
+    }
+
+    // show popup
+    openEditPopup();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to load member data.");
+  }
+}
+
+
+
+
+  async function updateMember() {
+  if (!currentEditMemberId) {
+    alert("No member selected");
+    return;
+  }
+
+  const data = {
+    firstName: document.getElementById('editFirstName').value.trim(),
+    lastName: document.getElementById('editLastName').value.trim(),
+    email: document.getElementById('editEmail').value.trim(),
+    birthday: document.getElementById('editBirthday').value,
+    gender: document.getElementById('editGender').value,
+    contact: document.getElementById('editContact').value.trim(),
+    username: document.getElementById('editUsername').value.trim(),
+    password: document.getElementById('editPassword').value,
+    role: document.getElementById('editRole').value,
+    status: document.getElementById('editStatus').value,
+  };
+
+  // If Member, include membership info
+  if (data.role === 'Member') {
+    data.membershipType = document.getElementById('editMembershipType').value;
+    data.plan = document.getElementById('editPlan').value;
+    data.startDate = document.getElementById('editStartDate').value;
+    data.endDate = document.getElementById('editEndDate').value;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/editMember/${currentEditMemberId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert("Member updated successfully!");
+      closeEditPopup();
+      loadMembers(); // reload your member list
+    } else {
+      alert("Error: " + (result.message || "Failed to update member"));
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Could not connect to server.");
+  }
+}
+
+
+
+  // === ADD MEMBER ===
+  async function addMember() {
+  const role = document.getElementById('role').value;
+  const data = {
+    firstName: document.getElementById('firstName').value.trim(),
+    lastName: document.getElementById('lastName').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    birthday: document.getElementById('birthday').value,
+    gender: document.getElementById('gender').value,
+    contact: document.getElementById('contact').value.trim(),
+    username: document.getElementById('username').value.trim(),
+    password: document.getElementById('password').value,
+    role: role,
+    status: document.getElementById('status').value
+  };
+
+  if(role === 'Member') {
+    data.membershipType = document.getElementById('membershipType').value;
+    data.plan = document.getElementById('plan').value;
+    data.startDate = document.getElementById('startDate').value;
+    data.endDate = document.getElementById('endDate').value;
+
+    if(!data.membershipType || !data.plan || !data.startDate || !data.endDate){
+      alert("Fill all membership fields!");
+      return;
+    }
+  }
+
+  if(!data.firstName || !data.lastName || !data.username || !data.password){
+    alert("Fill all required fields!");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/addMember`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if(result.success){
+      alert("Member added successfully!");
+      document.querySelectorAll('#addMemberPopup input, #addMemberPopup select').forEach(i=>i.value='');
+      closeAddMemberPopup();
+      loadMembers(); // reload list
+    } else {
+      alert("Error: " + (result.message || "Unknown error"));
+    }
+  } catch(err){
+    console.error(err);
+    alert("Failed to connect to server.");
+  }
+}
+
+
+  // === SEARCH (client-side) ===
+  async function searchMember() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const resultsContainer = document.getElementById('searchResults');
+    resultsContainer.innerHTML = '';
+    if(!query) { alert("Please enter a search term."); return; }
+
+    try{
+      const members = await fetch(`${API_URL}/members`).then(r => r.json());
+      if(!Array.isArray(members)) { resultsContainer.innerHTML = '<div class="empty">No members found.</div>'; return; }
+
+      const filtered = members.filter(m =>
+        (m.firstName && m.firstName.toLowerCase().includes(query)) ||
+        (m.lastName && m.lastName.toLowerCase().includes(query)) ||
+        (m.role && m.role.toLowerCase().includes(query)) ||
+        (m.startDate && m.startDate.toLowerCase().includes(query))
+      );
+
+      if(filtered.length === 0){
+        resultsContainer.innerHTML = `<div class="empty">No members found for "${escapeHtml(query)}".</div>`;
+        return;
+      }
+
+      const container = document.createElement('div');
+      container.className = 'member-list';
+      filtered.forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'member-card';
+        const membershipLabel = m.plan || m.membershipType || '-';
+        const statusClass = (m.status || '').toLowerCase() === 'expired' ? 'expired' : 'active';
+        card.innerHTML = `
+          <div class="member-info">
+            <div class="name">${escapeHtml(m.firstName || '')} ${escapeHtml(m.lastName || '')}</div>
+            <div class="meta">${escapeHtml(membershipLabel)}</div>
+          </div>
+          <div>
+            <span class="badge ${statusClass}">${escapeHtml(m.status || 'Active')}</span>
+          </div>
+          <div class="card-actions">
+            <button class="action-btn view" title="View" onclick="viewMember('${encodeURIComponent(m.username)}')"><i class="fa-solid fa-eye"></i></button>
+            <button class="action-btn edit" title="Edit" onclick="editMember('${encodeURIComponent(m.username)}')"><i class="fa-solid fa-pen"></i></button>
+            <button class="action-btn del" title="Delete" onclick="deleteMember('${encodeURIComponent(m.username)}')"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      resultsContainer.appendChild(container);
+    } catch(err){
+      console.error(err);
+      resultsContainer.innerHTML = '<div class="empty">Search failed.</div>';
+    }
+  }
+
+  // small helper to escape text for HTML
+  function escapeHtml(text){
+    if(!text && text !== 0) return '';
+    return String(text)
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'",'&#039;');
+  }
+
+  // === wiring events ===
+  document.getElementById('openAddMemberBtn').addEventListener('click', openAddMemberPopup);
+  document.getElementById('searchBtn').addEventListener('click', searchMember);
+
+  // close popups with ESC
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      closeAddMemberPopup();
+      closeEditPopup();
+      closeViewPopup();
+    }
+  });
+
+  // initial load
+  document.addEventListener('DOMContentLoaded', () => {
+    loadMembers();
+    handleAddRoleChange();
+    toggleMembershipFields();
+  });
+
+// DELETE MEMBER
+async function deleteMember(encodedUsername) {
+  const username = decodeURIComponent(encodedUsername);
+
+  if (!confirm(`Are you sure you want to delete ${username}? This action cannot be undone.`)) return;
+
+  try {
+    const response = await fetch(`${API_URL}/deleteMember/${username}`, {
+      method: 'DELETE'
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert(result.message || `Member ${username} deleted successfully!`);
+      loadMembers(); // reload the list
+    } else {
+      alert('Error: ' + (result.message || 'Failed to delete member.'));
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Failed to connect to server.');
+  }
+}
+
+
+ 
+
+
+
+</script>
+
+</body>
+</html>

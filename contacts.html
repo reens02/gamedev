@@ -1,0 +1,178 @@
+89% of storage used … If you run out of storage, you can't create, edit, and upload files. Get 30 GB for ₱49 ₱10/mo for 3 months.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fit and Lift - Contact Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  font-family:'Roboto',sans-serif;
+  min-height:100vh;
+  background:black;
+  color:#fff;
+  overflow-x:hidden;
+  position:relative;
+  padding-bottom:80px; /* space for footer */
+}
+
+/* Background */
+.background { position:fixed; top:0; left:0; width:110%; height:110%; object-fit:cover; filter:blur(6px) brightness(0.6); z-index:-1; }
+
+/* Navbar */
+nav { position:fixed; top:0; left:0; width:100%; background:rgba(0,0,0,0.85); padding:15px 40px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,0.7); z-index:1000; backdrop-filter:blur(5px); transition: background 0.3s; flex-wrap:wrap;}
+nav:hover { background: rgba(0,0,0,0.95);}
+nav .logo { font-size:26px; font-weight:bold; color:#f9d342; text-shadow:1px 1px 5px rgba(0,0,0,0.6);}
+nav ul { list-style:none; display:flex; gap:25px; transition:0.3s;}
+nav ul li a { text-decoration:none; color:#fff; font-size:16px; font-weight:500; position:relative; transition:color 0.3s;}
+nav ul li a::after { content:''; position:absolute; width:0; height:2px; background:#f9d342; left:0; bottom:-5px; transition:0.3s;}
+nav ul li a:hover::after { width:100%; }
+nav ul li a:hover { color:#f9d342; }
+
+/* Hamburger */
+.hamburger { display:none; flex-direction:column; gap:4px; cursor:pointer; }
+.hamburger div { width:25px; height:3px; background:#f9d342; border-radius:2px; }
+
+/* Sidebar */
+.sidebar { position:fixed; top:0; left:-250px; width:250px; height:100%; background:#121212; z-index:1500; padding:60px 20px; display:flex; flex-direction:column; gap:20px; transition:0.3s; }
+.sidebar a { color:#fff; text-decoration:none; font-weight:500; transition:0.3s; }
+.sidebar a:hover { color:#f9d342; }
+
+/* Contact Section */
+.contact-container {
+  margin: 140px auto;
+  max-width: 800px;
+  background: rgba(255,255,255,0.05);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.contact-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+}
+.contact-container h2 {
+  color: #f9d342;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 32px;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.7);
+}
+.contact-info { margin-bottom: 30px; font-size: 16px; line-height: 1.6; }
+.contact-info p { margin: 8px 0; }
+.contact-info a { color:#f9d342; font-weight:bold; text-decoration:none; transition:0.3s; }
+.contact-info a:hover { text-decoration:underline; color:#ffc107; }
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 12px;
+  outline: none;
+  font-size: 14px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transition: background 0.3s;
+}
+.contact-form input::placeholder,
+.contact-form textarea::placeholder { color:#ccc; }
+.contact-form input:focus,
+.contact-form textarea:focus { background: rgba(255,255,255,0.2); }
+.contact-form input[type="submit"] {
+  background: linear-gradient(90deg, #f9d342, #ffc107);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.contact-form input[type="submit"]:hover {
+  background: linear-gradient(90deg, #ffc107, #f9d342);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* Footer Styles */
+footer { position:fixed; bottom:0; left:0; width:100%; background: rgba(0,0,0,0.9); color:#fff; text-align:center; padding:15px 20px; box-shadow:0 -4px 15px rgba(0,0,0,0.7); backdrop-filter:blur(5px); z-index:1000; }
+footer .footer-links { margin-top:8px; display:flex; justify-content:center; gap:15px; flex-wrap:wrap; }
+footer .footer-links a { color:#f9d342; text-decoration:none; font-weight:500; transition:0.3s; }
+footer .footer-links a:hover { color:#ffc107; text-decoration:underline; }
+footer p { margin:0; font-size:14px; }
+
+/* Responsive */
+@media (max-width:768px){
+  nav ul { display:none; }
+  .hamburger { display:flex; }
+  .contact-container { padding: 30px 20px; margin:120px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<img class="background" src="https://images.unsplash.com/photo-1558611848-73f7eb4001a1" alt="Gym Background">
+
+<!-- Navbar -->
+<nav>
+  <div class="logo">Fit and Lift</div>
+  <div class="hamburger" onclick="toggleSidebar()"><div></div><div></div><div></div></div>
+  <ul>
+    <li><a href="home.html">Home</a></li>
+    <li><a href="program.html">Programs</a></li>
+    <li><a href="trainers.html">Trainers</a></li>
+    <li><a href="contacts.html">Contact</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+  <a href="home.html">Home</a>
+  <a href="program.html">Programs</a>
+  <a href="trainers.html">Trainers</a>
+  <a href="contacts.html">Contact</a>
+  <a href="login.html">Login</a>
+</div>
+
+<!-- Contact Section -->
+<div class="contact-container">
+  <h2>Contact Us</h2>
+  <div class="contact-info">
+    <p><strong>📍 Address:</strong> 123 Fitness Street, Carmona, Cavite</p>
+    <p><strong>📞 Phone:</strong> +63 912 345 6789</p>
+    <p><strong>📧 Email:</strong> fitandlift@gmail.com</p>
+    <p><strong>🕒 Hours:</strong> Mon - Sun | 6:00 AM - 10:00 PM</p>
+    <p><strong>🌐 Facebook:</strong> 
+      <a href="https://www.facebook.com/profile.php?id=61551117331924" target="_blank">Visit our Facebook Page</a>
+    </p>
+  </div>
+  <form class="contact-form">
+    <input type="text" placeholder="Your Name" required>
+    <input type="email" placeholder="Your Email" required>
+    <textarea rows="5" placeholder="Your Message" required></textarea>
+    <input type="submit" value="Send Message">
+  </form>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-content">
+    <p>&copy; 2025 Fit and Lift. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+function toggleSidebar(){
+  const sidebar = document.getElementById("sidebar");
+  sidebar.style.left = (sidebar.style.left === "0px") ? "-250px" : "0px";
+}
+</script>
+
+</body>
+</html>
